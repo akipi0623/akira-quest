@@ -82,9 +82,9 @@
           01 / 04
         </p>
 
-        <h1 class="section-title">
-          WHO<br>
-          AM I?
+        <h1 class="section-title section-title--catch">
+          武器は、好奇心。<br>
+          防具は、失敗を恐れない心。
         </h1>
 
       </div>
@@ -109,22 +109,50 @@
           </p>
 
 
-          <p class="profile-description">
-
-            名前：小山 央（こやま あきら）<br>
-            出身：○○県<br>
-            現在：○○をしています<br>
-            好きなこと：○○、○○、○○
-
+          <!-- 能力値（ドラクエのステータス風）
+               1行 ＝ 1つのボタン。クリック（タップ）すると、その能力のくわしい説明が開く。
+               説明文は js/profile.js の PROFILE_STATS に書いてある -->
+          <p class="stat-caption">
+            のうりょく<span>（タップで くわしく）</span>
           </p>
 
-
-          <p class="profile-description">
-
-            周りからは、
-            「○○な人」と言われることが多いです。
-
-          </p>
+          <ul class="stat-list">
+            <li>
+              <button class="stat" type="button" data-stat="curiosity" aria-haspopup="dialog">
+                <span class="stat__name">好奇心</span>
+                <span class="stat__stars" aria-hidden="true"><span class="stat__on">★★★★★</span></span>
+                <span class="stat__sr">5段階中5</span>
+              </button>
+            </li>
+            <li>
+              <button class="stat" type="button" data-stat="action" aria-haspopup="dialog">
+                <span class="stat__name">行動力</span>
+                <span class="stat__stars" aria-hidden="true"><span class="stat__on">★★★★</span><span class="stat__off">☆</span></span>
+                <span class="stat__sr">5段階中4</span>
+              </button>
+            </li>
+            <li>
+              <button class="stat" type="button" data-stat="planning" aria-haspopup="dialog">
+                <span class="stat__name">計画性</span>
+                <span class="stat__stars" aria-hidden="true"><span class="stat__on">★★</span><span class="stat__off">☆☆☆</span></span>
+                <span class="stat__sr">5段階中2</span>
+              </button>
+            </li>
+            <li>
+              <button class="stat" type="button" data-stat="communication" aria-haspopup="dialog">
+                <span class="stat__name">コミュ力</span>
+                <span class="stat__stars" aria-hidden="true"><span class="stat__on">★★</span><span class="stat__off">☆☆☆</span></span>
+                <span class="stat__sr">5段階中2</span>
+              </button>
+            </li>
+            <li>
+              <button class="stat" type="button" data-stat="persistence" aria-haspopup="dialog">
+                <span class="stat__name">継続力</span>
+                <span class="stat__stars" aria-hidden="true"><span class="stat__on">★★★</span><span class="stat__off">☆☆</span></span>
+                <span class="stat__sr">5段階中3</span>
+              </button>
+            </li>
+          </ul>
 
         </div>
 
@@ -133,19 +161,52 @@
     </section>
 
 
-
-    <!-- つぎのページへの道しるべ（全ページ共通・右下に表示） -->
-    <div class="next-page reveal">
-      <a href="history.html" class="next-link">
-        <span class="next-link__label">つぎの ぼうけんへ</span>
-        <span class="next-link__name">HISTORY</span>
-      </a>
-    </div>
-
   </main>
 
 
+  <!-- =========================
+       能力値のポップアップ
+       <dialog> はブラウザに最初から用意されている「ポップアップ専用」のタグ。
+       中身（能力名・星・説明文）は js/profile.js が入れ替える。
+  ========================== -->
+  <dialog
+    id="stat-dialog"
+    class="dq-dialog"
+    aria-labelledby="stat-dialog-title">
+
+    <!-- 枠線の上に乗る見出し（能力名） -->
+    <h2
+      id="stat-dialog-title"
+      class="dq-dialog__title">
+    </h2>
+
+    <div class="dq-window dq-dialog__inner">
+
+      <!-- 星の数 -->
+      <p class="dq-dialog__stars" aria-hidden="true"></p>
+
+      <!-- 説明文 -->
+      <p class="dq-dialog__text"></p>
+
+      <!-- 閉じるコマンド -->
+      <div class="dq-dialog__commands">
+        <button
+          class="dq-dialog__close"
+          type="button">
+          とじる
+        </button>
+      </div>
+
+    </div>
+
+  </dialog>
+
+
+
   <script src="js/script.js"></script>
+
+  <!-- 能力値のポップアップ（このページだけで使う） -->
+  <script src="js/profile.js"></script>
 
 </body>
 

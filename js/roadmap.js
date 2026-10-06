@@ -25,32 +25,33 @@
 // 主人公の名前（「つよさ」ウィンドウやメッセージに出ます。好きな名前に変えてOK）
 const ROADMAP_HERO_NAME = "AKIRA";
 
-// どのマスもクリックして止まれます。止まると「ひとこと」のポップアップが出て、
-// そこで「くわしく みる」を選ぶと、詳しいエピソードのウィンドウが開きます。
-//   summary  … ポップアップに出す、短いひとこと（\n で改行）
-//   text     … 「くわしく みる」で出す、詳しいエピソード
+// 【2段階の表示】
+//   ① 通常時 … balloon の文章を、マスの下のバルーン（吹き出し）に常に表示する
+//   ② クリック時 … コマがそのマスまで歩き、text の詳しいエピソードのウィンドウが開く
+//   balloon  … バルーンに常に出す、短い説明（空ならバルーンを出さない）
+//   text     … クリックしたときのウィンドウに出す、詳しいエピソード
 //   hasEvent … true なら宝箱のマス、false なら石だたみのマス
-//   ※ summary や text が空のマスは、RPGらしい決まり文句が出ます（getRoadmapSummary などを参照）。
+//   ※ text が空のマスは、RPGらしい決まり文句が出ます（getRoadmapDetail を参照）。
 //     エピソードを書き足せば、そのまま表示されます。
 // image は history.html から見た場所（相対パス）で書きます。
 const lifeRoadmapData = [
-  { age: 0, title: "0歳", summary: "千葉県で たんじょう！\nだんボールから はじまる ぼうけん。", text: "千葉県で誕生(両親曰く、段ボールに入っていたところを拾ったらしい)", hasEvent: true, image: "images/roadmap/0歳.jpg" },
+  { age: 0, title: "0歳", balloon: "5人兄弟の末っ子として爆誕", text: "千葉県で誕生(両親曰く、段ボールに入っていたところを拾ったらしい)", hasEvent: true, image: "images/roadmap/0歳.jpg" },
   { age: 2, title: "2歳", text: "", hasEvent: false },
-  { age: 4, title: "4歳", summary: "埼玉の いなかへ ひっこした。\nつうがくの あくむが まっている…", text: "埼玉県の某田舎に引っ越し(このときは知りませんでした。通学で悪夢を見ることを)", hasEvent: true, image: "images/roadmap/4歳.jpg" },
+  { age: 4, title: "4歳", balloon: "家族7人で埼玉の秘境に移住", text: "埼玉県の某田舎に引っ越し(このときは知りませんでした。通学で悪夢を見ることを)", hasEvent: true, image: "images/roadmap/4歳.jpg" },
   { age: 8, title: "8歳", text: "", hasEvent: false },
   { age: 11, title: "11歳", text: "", hasEvent: false },
-  { age: 13, title: "13歳", summary: "中学生に なった！\nソフトテニス部に にゅうぶ。", text: "小学校メンバーほぼ変わらず中学生になる。中学ではソフトテニス部に入部。(14歳で初彼女ができて調子に載る)", hasEvent: true, image: "images/roadmap/13歳.jpg" },
-  { age: 15, title: "15歳", summary: "スポーツ強豪校で 弓道部に。\nあんこく じだいの はじまり…", text: "埼玉のスポーツ強豪校に入り、弓道部に入部(完全なる暗黒時代突入)", hasEvent: true, image: "images/roadmap/15歳.jpg" },
-  { age: 18, title: "18歳", summary: "E判定から 大学に ごうかく！\nしかし バイトの日々が はじまる。", text: "E判定で合格が絶望的だった大学に何とか合格。だがしかし、ここからバイト>>>大学の生活が始まる", hasEvent: true, image: "images/roadmap/18歳.jpg" },
+  { age: 13, title: "13歳", balloon: "埼玉の錦織圭？", text: "小学校メンバーほぼ変わらず中学生になる。中学ではソフトテニス部に入部。(14歳で初彼女ができて調子に載る)", hasEvent: true, image: "images/roadmap/13歳.jpg" },
+  { age: 15, title: "15歳", balloon: "隠キャ爆誕", text: "埼玉のスポーツ強豪校に入り、弓道部に入部(完全なる暗黒時代突入)", hasEvent: true, image: "images/roadmap/15歳.jpg" },
+  { age: 18, title: "18歳", balloon: "バイト戦士に転職？", text: "E判定で合格が絶望的だった大学に何とか合格。だがしかし、ここからバイト>>>大学の生活が始まる", hasEvent: true, image: "images/roadmap/18歳.jpg" },
   { age: 21, title: "21歳", text: "", hasEvent: false },
-  { age: 24, title: "24歳", summary: "大学を そつぎょう！\nWeb広告代理店に 営業として 入社。", text: "紆余曲折ありながら大学卒業。東京にあるWeb広告代理店に営業として入社(絵に描いたような体育会系の代理店でしたが、今と思えばメンタルはかなり鍛えられたと思います。感謝。)", hasEvent: true, image: "images/roadmap/24歳.jpg" },
-  { age: 26, title: "26歳", summary: "Webメディア事業会社へ 転職！\nあたらしい スキルを おぼえた。", text: "会社に染まりすぎる自分自身に恐怖を感じ、Webメディア事業会社に営業として転職(営業だけでなくディレクション・SEO・広告運用を学ぶ。)", hasEvent: true, image: "images/roadmap/26歳.jpg" },
+  { age: 24, title: "24歳", balloon: "体育会代理店に入社", text: "紆余曲折ありながら大学卒業。東京にあるWeb広告代理店に営業として入社(絵に描いたような体育会系の代理店でしたが、今と思えばメンタルはかなり鍛えられたと思います。感謝。)", hasEvent: true, image: "images/roadmap/24歳.jpg" },
+  { age: 26, title: "26歳", balloon: "1度目の転職", text: "会社に染まりすぎる自分自身に恐怖を感じ、Webメディア事業会社に営業として転職(営業だけでなくディレクション・SEO・広告運用を学ぶ。)", hasEvent: true, image: "images/roadmap/26歳.jpg" },
   { age: 30, title: "30歳", text: "", hasEvent: false },
-  { age: 33, title: "33歳", summary: "自己成長の ために 転職を けつい。\nセルミュラーに 入社！", text: "自己成長のために転職を決意。ご縁がありセルミュラーに入社", hasEvent: true, image: "images/roadmap/33歳.jpg" },
-  { age: 36, title: "36歳", summary: "年間1億円プレーヤーに なった！", text: "年間1億円プレーヤーになり、自己と会社の成長のために奮闘", hasEvent: true, image: "images/roadmap/36歳.jpg" },
+  { age: 33, title: "33歳", balloon: "成長のため2度目の転職", text: "自己成長のために転職を決意。ご縁がありセルミュラーに入社", hasEvent: true, image: "images/roadmap/33歳.jpg" },
+  { age: 36, title: "36歳", balloon: "見ていて下さい", text: "年間1億円プレーヤーになり、自己と会社の成長のために奮闘", hasEvent: true, image: "images/roadmap/36歳.jpg" },
   { age: 45, title: "45歳", text: "", hasEvent: false },
   { age: 52, title: "52歳", text: "", hasEvent: false },
-  { age: 60, title: "60歳（GOAL）", summary: "げんえきを いんたい。\nキャンピングカーで ぜんこくの たびへ！", text: "現役を引退。キャンピングカーを購入し、愛犬と共に全国津々浦々をのんびり巡るのが目標", hasEvent: true, image: "images/roadmap/60歳.jpg" }
+  { age: 60, title: "60歳（GOAL）", balloon: "目指せ！スローライフ", text: "現役を引退。キャンピングカーを購入し、愛犬と共に全国津々浦々をのんびり巡るのが目標", hasEvent: true, image: "images/roadmap/60歳.jpg" }
 ];
 
 
@@ -191,7 +192,6 @@ const roadmapMessage = document.getElementById("roadmap-message");
 const roadmapMessageText = document.getElementById("roadmap-message-text");
 const roadmapMessageLive = document.getElementById("roadmap-message-live");
 const roadmapSoundButton = document.getElementById("roadmap-sound");
-const roadmapPopup = document.getElementById("roadmap-popup");
 
 
 /* ========================================
@@ -204,7 +204,6 @@ const roadmapState = {
   currentIndex: 0,  // コマが今いるマスの番号（0 = START）
   isMoving: false,  // コマが移動中なら true（移動中のクリックを無視するため）
   soundOn: false,   // 効果音を鳴らすかどうか（最初はOFF）
-  popupIndex: null, // ひとことポップアップを出しているマスの番号（出していなければ null）
   modalIndex: null  // 詳しいウィンドウで見ているマスの番号（見ていなければ null）
 };
 
@@ -408,15 +407,11 @@ function createRoadmapTypewriter(element) {
 
 }
 
-// 文字送り係を3人用意する（メッセージウィンドウ用、モーダル用、ポップアップ用）
+// 文字送り係を2人用意する（メッセージウィンドウ用と、モーダル用）
 // ※ モーダルがないページでエラーにならないよう、あるときだけ作る
 const roadmapMessageWriter = createRoadmapTypewriter(roadmapMessageText);
 const roadmapModalWriter = roadmapModal
   ? createRoadmapTypewriter(roadmapModal.querySelector(".roadmap-modal__text"))
-  : null;
-// 3人目：マスのそばに出る「ひとことポップアップ」用
-const roadmapPopupWriter = roadmapPopup
-  ? createRoadmapTypewriter(roadmapPopup.querySelector(".roadmap-popup__text"))
   : null;
 
 
@@ -470,11 +465,24 @@ function createRoadmapTiles() {
       '<span class="roadmap-tile__age">' + item.age + "<small>さい</small></span>";
 
 
+    // 常時表示のバルーン（吹き出し）。balloon の文章があるマスだけに付ける。
+    // マス（ボタン）の中に入れているので、マスと一緒に動き、バルーンを押してもマスを押したことになる
+    if (item.balloon) {
+      const balloon = document.createElement("span");
+      balloon.className = "roadmap-balloon";
+      balloon.textContent = item.balloon; // textContent なので記号もそのまま安全に入る
+      tile.appendChild(balloon);
+    }
+
+
     // 宝箱のあるマスと、石だたみのマスで見た目（class）を分ける
     tile.classList.add(item.hasEvent ? "is-event" : "is-blank");
 
     // 画面読み上げソフト用の説明
-    tile.setAttribute("aria-label", item.title + "のマスへ すすむ");
+    tile.setAttribute(
+      "aria-label",
+      item.title + (item.balloon ? "「" + item.balloon + "」" : "") + " くわしく見る"
+    );
 
     // クリックされたら、このマスの番号を渡して処理を始める
     tile.addEventListener("click", () => {
@@ -580,6 +588,7 @@ function getRoadmapColumnCount() {
 
   const width = roadmapBoard.clientWidth;
 
+  if (width < 400) return 2; // 小さいスマホ（バルーンの文字が小さく詰まりすぎないように2列）
   if (width < 520) return 3; // スマホ
   if (width < 820) return 4; // タブレット
   return 5;                  // パソコン
@@ -800,9 +809,6 @@ async function handleRoadmapTileClick(targetIndex) {
 
   roadmapSounds.cursor();
 
-  // 前のマスのポップアップが出ていたら、いったん閉じてから歩き出す
-  hideRoadmapPopup();
-
 
   if (targetIndex !== startIndex) {
 
@@ -850,178 +856,8 @@ async function handleRoadmapTileClick(targetIndex) {
       : item.title + "の マスに とまった。"
   );
 
-  // ⑤ マスのそばに、ひとことポップアップを出す
-  //   （そこで「くわしく みる」を選ぶと、詳しいエピソードのウィンドウが開く）
-  showRoadmapPopup(targetIndex, levelUpText);
-
-}
-
-
-/* ========================================
-   8.5 ひとことポップアップ
-   マスに止まると、そのマスのそばに小さなメッセージウィンドウを出す。
-   ここで「くわしく みる」を選ぶと、9. の詳しいウィンドウ（モーダル）が開く。
-
-   【表示/非表示の状態】
-   roadmapPopup.hidden が true なら非表示、false なら表示。
-   どのマスのポップアップかは roadmapState.popupIndex に覚えておく。
-======================================== */
-
-// マスのひとこと（データに summary が無いマスは、RPGらしい決まり文句にする）
-function getRoadmapSummary(item) {
-  return item.summary ||
-    ROADMAP_HERO_NAME + "は あたりを みわたした。\nしかし なにも みつからなかった！";
-}
-
-// マスの詳しいエピソード（データに text が無いマスは、まだ書かれていない扱いにする）
-function getRoadmapDetail(item) {
-  return item.text ||
-    item.title + "ごろの きろくは、まだ ぼうけんのしょに かかれていない…";
-}
-
-
-function showRoadmapPopup(index, levelUpText) {
-
-  const item = lifeRoadmapData[index];
-
-  roadmapState.popupIndex = index;
-
-  roadmapPopup.querySelector(".roadmap-popup__label").textContent = item.title;
-  roadmapPopup.querySelector(".roadmap-popup__levelup").textContent = levelUpText;
-
-  // 先に表示してから文字送りを始める（表示前だと、高さを正しく測れないため）
-  roadmapPopup.hidden = false;
-  roadmapPopupWriter.type(getRoadmapSummary(item));
-
-  // 高さが決まったので、マスのそばに置く
-  positionRoadmapPopup();
-
-  // RPGと同じく、1つ目のコマンド「くわしく みる」にカーソル（▶）を合わせ、
-  // キーボードの Enter ですぐ選べるようにフォーカスも移す
-  const detailCommand = roadmapPopup.querySelector('[data-action="detail"]');
-  selectRoadmapPopupCommand(detailCommand);
-  detailCommand.focus({ preventScroll: true });
-
-}
-
-
-// ▶ カーソルを、指定したコマンドに移す（CSS の .is-selected）
-function selectRoadmapPopupCommand(command) {
-
-  roadmapPopup.querySelectorAll(".roadmap-popup__command").forEach((item) => {
-    item.classList.toggle("is-selected", item === command);
-  });
-
-}
-
-
-function hideRoadmapPopup() {
-
-  roadmapPopupWriter.finish();
-  roadmapPopup.hidden = true;
-  roadmapState.popupIndex = null;
-
-}
-
-
-// ポップアップを、止まったマスの「下」に置く。
-// 下に入りきらないとき（盤の一番下の行など）は「上」に置く
-function positionRoadmapPopup() {
-
-  if (roadmapPopup.hidden || roadmapState.popupIndex === null) {
-    return;
-  }
-
-  const point = getRoadmapTilePosition(roadmapState.popupIndex);
-  const boardWidth = roadmapBoard.clientWidth;
-  const boardHeight = roadmapBoard.clientHeight;
-  const popupWidth = roadmapPopup.offsetWidth;
-  const popupHeight = roadmapPopup.offsetHeight;
-  const gap = 18; // マスとポップアップの間のすき間
-
-  // 横：マスの中心にそろえる。ただし盤の左右からはみ出さないように 12px 内側におさめる
-  //   Math.min / Math.max で「最小値〜最大値」の範囲に閉じこめている
-  const left = Math.max(12, Math.min(point.x - popupWidth / 2, boardWidth - popupWidth - 12));
-
-  // 縦：まずはマスの下。入りきらなければマス（とコマ）の上へ
-  let y = point.top + point.size + gap;
-  let placeAbove = false;
-
-  if (y + popupHeight > boardHeight - 8) {
-    y = point.top - roadmapAvatar.offsetHeight * 0.6 - popupHeight - gap;
-    placeAbove = true;
-  }
-
-  roadmapPopup.style.left = left + "px";
-  roadmapPopup.style.top = Math.max(8, y) + "px";
-
-  // 吹き出しのしっぽ（▲）を、マスの中心を指す位置に合わせる（CSS の --tail-x）
-  roadmapPopup.style.setProperty("--tail-x", (point.x - left) + "px");
-  roadmapPopup.classList.toggle("is-above", placeAbove);
-
-}
-
-
-function setupRoadmapPopup() {
-
-  // マウスを乗せた／Tabキーで選んだコマンドに、▶ カーソルを移す
-  roadmapPopup.querySelectorAll(".roadmap-popup__command").forEach((command) => {
-    command.addEventListener("mouseenter", () => selectRoadmapPopupCommand(command));
-    command.addEventListener("focus", () => selectRoadmapPopupCommand(command));
-  });
-
-  // 「くわしく みる」→ 詳しいエピソードのウィンドウを開く
-  roadmapPopup
-    .querySelector('[data-action="detail"]')
-    .addEventListener("click", () => {
-
-      const index = roadmapState.popupIndex;
-
-      if (index === null) {
-        return;
-      }
-
-      roadmapSounds.cursor();
-      hideRoadmapPopup();
-      openRoadmapModal(index);
-
-    });
-
-
-  // 「とじる」→ ポップアップを閉じて、止まったマスにフォーカスを戻す
-  roadmapPopup
-    .querySelector('[data-action="close"]')
-    .addEventListener("click", () => {
-
-      const index = roadmapState.popupIndex;
-
-      roadmapSounds.cursor();
-      hideRoadmapPopup();
-      showRoadmapMessage("＊ つぎは どこへ いきますか？");
-
-      if (index !== null) {
-        roadmapTiles[index].focus({ preventScroll: true });
-      }
-
-    });
-
-
-  // 文章をクリックしたら、文字送りをスキップして全文を出す
-  roadmapPopup
-    .querySelector(".roadmap-popup__text")
-    .addEventListener("click", () => {
-      roadmapPopupWriter.finish();
-    });
-
-
-  // Escキーで閉じる（詳しいウィンドウが開いているときは、そちらが先に閉じる）
-  document.addEventListener("keydown", (event) => {
-
-    if (event.key === "Escape" && !roadmapPopup.hidden && !roadmapModal.open) {
-      roadmapPopup.querySelector('[data-action="close"]').click();
-    }
-
-  });
+  // ⑤ 詳しいエピソードのウィンドウ（詳細ポップアップ）を開く
+  openRoadmapModal(targetIndex, levelUpText);
 
 }
 
@@ -1036,7 +872,14 @@ function setupRoadmapPopup() {
      今開いているか … roadmapModal.open（true / false）
 ======================================== */
 
-function openRoadmapModal(index) {
+// マスの詳しいエピソード（データに text が無いマスは、まだ書かれていない扱いにする）
+function getRoadmapDetail(item) {
+  return item.text ||
+    item.title + "ごろの きろくは、まだ ぼうけんのしょに かかれていない…";
+}
+
+
+function openRoadmapModal(index, levelUpText) {
 
   const item = lifeRoadmapData[index];
   const title = roadmapModal.querySelector(".roadmap-modal__title");
@@ -1049,9 +892,9 @@ function openRoadmapModal(index) {
 
   // 中身を、クリックされたマスのデータに入れ替える
   // （textContent は文字をそのまま入れるので、記号が入っていても安全）
-  // 金色の一行 ＝ ポップアップと同じ「ひとこと」、下の文章 ＝ 詳しいエピソード
+  // 金色の一行 ＝「レベルが あがった！」など、下の文章 ＝ 詳しいエピソード
   title.textContent = item.title;
-  levelUp.textContent = getRoadmapSummary(item).replace("\n", " ");
+  levelUp.textContent = levelUpText;
 
 
   if (item.image) {
@@ -1202,7 +1045,6 @@ if (roadmapBoard) {
   updateRoadmapStatus();
   setupRoadmapPixelFaces();
   setupRoadmapModal();
-  setupRoadmapPopup();
   setupRoadmapSound();
 
 
@@ -1231,7 +1073,6 @@ if (roadmapBoard) {
 
     requestAnimationFrame(() => {
       layoutRoadmapBoard();
-      positionRoadmapPopup(); // ポップアップも、マスの新しい位置に合わせて置き直す
       roadmapResizeRequested = false;
     });
 

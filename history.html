@@ -87,9 +87,9 @@
           02 / 04
         </p>
 
-        <h1 class="section-title">
-          MY<br>
-          HISTORY.
+        <h1 class="section-title section-title--catch">
+          レベル0から、<br>
+          ずっと挑戦者。
         </h1>
 
       </div>
@@ -180,48 +180,6 @@
 
               <!-- ここにJSがマス（ボタン）を追加します -->
 
-
-              <!-- ひとことポップアップ（マスに止まると、そのマスのそばに出る）
-                   位置はJSがマスに合わせて決める。最初は hidden で隠しておく -->
-              <div
-                id="roadmap-popup"
-                class="dq-window roadmap-popup"
-                role="group"
-                aria-labelledby="roadmap-popup-label"
-                hidden>
-
-                <!-- 枠の上の見出し（年齢） -->
-                <p
-                  id="roadmap-popup-label"
-                  class="dq-window__label roadmap-popup__label">
-                </p>
-
-                <!-- 「レベルが あがった！」などの一行 -->
-                <p class="roadmap-popup__levelup"></p>
-
-                <!-- ひとこと（1文字ずつ表示。クリックでスキップ） -->
-                <p
-                  class="roadmap-popup__text"
-                  aria-live="polite">
-                </p>
-
-                <!-- コマンド（▶ で選ぶ） -->
-                <div class="roadmap-popup__commands">
-                  <button
-                    class="roadmap-popup__command"
-                    type="button"
-                    data-action="detail">
-                    くわしく みる
-                  </button>
-                  <button
-                    class="roadmap-popup__command"
-                    type="button"
-                    data-action="close">
-                    とじる
-                  </button>
-                </div>
-
-              </div>
 
               <!-- 主人公のコマ。読み込んだ写真をJSがドット絵に変換します -->
               <div
@@ -327,15 +285,6 @@
       </dialog>
 
     </section>
-
-
-    <!-- つぎのページへの道しるべ（全ページ共通・右下に表示） -->
-    <div class="next-page reveal">
-      <a href="strength.html" class="next-link">
-        <span class="next-link__label">つぎの ぼうけんへ</span>
-        <span class="next-link__name">STRENGTH</span>
-      </a>
-    </div>
 
   </main>
 

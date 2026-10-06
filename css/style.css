@@ -251,6 +251,13 @@ main {
   letter-spacing: 0.02em;
 }
 
+/* 日本語のキャッチコピーの見出し（「武器は、好奇心。」など）。
+   英語の見出しより文字数が多いので、少し小さめにして、行の間も広げる */
+.section-title--catch {
+  font-size: clamp(30px, 4.4vw, 60px);
+  line-height: 1.4;
+}
+
 
 /* ========================================
    IMAGE（写真の枠）
@@ -305,6 +312,95 @@ main {
 
 .profile-description {
   font-size: 16px;
+}
+
+
+/* --- 能力値（ドラクエのステータス風） --- */
+
+.stat-caption {
+  margin: 0 0 8px;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--muted-color);
+}
+
+.stat-caption span {
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.stat-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;   /* ・の記号を消す */
+}
+
+/* 1つの能力 ＝ 1つのボタン。左に能力名、右に星を並べ、行ごとに点線で区切る */
+.stat {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 48px;          /* スマホでもタップしやすい高さ */
+  padding: 8px 4px 8px 28px; /* 左に ▶ カーソルのすき間 */
+  background: none;
+  border: none;
+  border-bottom: 1px dashed #444444;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 17px;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* ▶ カーソル（普段は隠す） */
+.stat::before {
+  content: "▶";
+  position: absolute;
+  left: 4px;
+  font-size: 0.75em;
+  opacity: 0;
+}
+
+/* マウスを乗せる／キーボードで選ぶと、金色＋点滅カーソル（RPGのコマンド選択風） */
+.stat:hover,
+.stat:focus-visible {
+  color: var(--accent-color);
+  outline: none;
+}
+
+.stat:hover::before,
+.stat:focus-visible::before {
+  opacity: 1;
+  animation: dqBlink 0.8s steps(1) infinite;
+}
+
+/* 星：★（金色）と ☆（灰色）で、5段階のどこまで埋まっているかを見せる */
+.stat__stars {
+  flex-shrink: 0;            /* 幅が狭くても星がつぶれないように */
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.stat__on {
+  color: var(--accent-color);
+}
+
+.stat__off {
+  color: #555555;
+}
+
+/* 画面には出さず、読み上げソフトだけに「5段階中4」と伝える */
+.stat__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 
@@ -514,32 +610,6 @@ main {
   to   { transform: scaleY(1); }
 }
 
-/* ステータス：項目名と中身を左右に並べ、行ごとに点線で区切る */
-.goal-status__list {
-  margin: 0;
-}
-
-.goal-status__row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 8px 0;
-  border-bottom: 1px dashed #444444;
-}
-
-.goal-status__row:last-child {
-  border-bottom: none;
-}
-
-.goal-status__row dt {
-  color: var(--muted-color);
-}
-
-.goal-status__row dd {
-  margin: 0;
-  text-align: right;
-}
-
 /* メインクエスト */
 .goal-quest__title {
   position: relative;
@@ -558,10 +628,21 @@ main {
   animation: dqBlink 1.4s steps(1) infinite;
 }
 
+/* 「そのために」の小見出し（灰色の小さな文字＋左に金色の縦線） */
+.goal-quest__sub {
+  margin: 0 0 4px;
+  padding-left: 10px;
+  border-left: 3px solid var(--accent-color);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--muted-color);
+}
+
 .goal-quest__text {
   margin: 0 0 18px;
   font-size: 15px;
   line-height: 1.9;
+  overflow-wrap: anywhere;   /* 長い文章でも、枠からはみ出さずに折り返す */
 }
 
 /* 「たっせい めやす」などの小さなタグ */
@@ -599,58 +680,146 @@ main {
 
 
 /* ========================================
-   NEXT PAGE（右下の「つぎの ぼうけんへ ▶ ○○」）
-   全ページの最後に置く、次のページへの道しるべ
+   DQ DIALOG（RPG風のポップアップ。PROFILEの能力値で使用）
+
+   <dialog> を JS の showModal() で開くと、
+   ・ページの一番手前に表示される
+   ・後ろに ::backdrop（暗い幕）が自動で出る
+   ・Escキーで閉じられる
+   という機能が最初から付いている。
+   見た目は HISTORY の詳しいエピソードのウィンドウ（roadmap.css）と同じ作り。
 ======================================== */
 
-/* 置き場所：横いっぱいの箱の中で、右端に寄せる */
-.next-page {
-  display: flex;
-  justify-content: flex-end;  /* 中身（リンク）を右端へ */
-  padding: 0 5vw 120px;
+.dq-dialog {
+  width: calc(100% - 32px);   /* スマホでは左右16pxずつ空ける */
+  max-width: 520px;
+  /* 上に14px空けて、見出しを枠線にまたがらせるスペースにする */
+  padding: 14px 4px 4px;
+  border: none;
+  background: transparent;    /* 見た目は中の .dq-window に任せる */
+  overflow: visible;
+  font-family: var(--font-pixel);
 }
 
-/* リンク本体：小さな説明（上）＋ページ名（下）の2段 */
-.next-link {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;      /* 2段とも右ぞろえ */
-  gap: 4px;
+/* 開くとき：ウィンドウが上下にカクカク広がる（RPGの窓が開く感じ） */
+.dq-dialog[open] .dq-dialog__inner,
+.dq-dialog[open] .dq-dialog__title {
+  animation: dqDialogOpen 0.25s steps(5);
 }
 
-.next-link__label {
-  font-size: 13px;
-  letter-spacing: 0.15em;
-  color: var(--muted-color);
+/* 閉じるとき：JSが is-closing を付けている間に、逆向きにしぼむ */
+.dq-dialog.is-closing .dq-dialog__inner,
+.dq-dialog.is-closing .dq-dialog__title {
+  animation: dqDialogClose 0.2s steps(4) forwards;
 }
 
-/* ページ名。左に ▶ カーソルを付けて、RPGのコマンドのように見せる */
-.next-link__name {
-  position: relative;
-  padding-left: 28px;         /* ▶ のすき間 */
-  font-size: clamp(22px, 3vw, 32px);
-  letter-spacing: 0.1em;
+.dq-dialog.is-closing::backdrop {
+  animation: dqBackdropOut 0.2s ease forwards;
 }
 
-.next-link__name::before {
-  content: "▶";
+@keyframes dqDialogOpen {
+  from { transform: scaleY(0.05); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes dqDialogClose {
+  from { transform: scaleY(1);    opacity: 1; }
+  to   { transform: scaleY(0.05); opacity: 0; }
+}
+
+@keyframes dqBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dqBackdropOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* 後ろの暗い幕 */
+.dq-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.dq-dialog[open]::backdrop {
+  animation: dqBackdropIn 0.25s ease;
+}
+
+/* 枠線にまたがる見出し（能力名） */
+.dq-dialog__title {
   position: absolute;
-  left: 0;
-  font-size: 0.7em;
-  top: 50%;
-  transform: translateY(-50%);
-  /* いつも点滅させて「ここから進めるよ」と気づいてもらう */
-  animation: dqBlink 1s steps(1) infinite;
+  top: 0;
+  left: 30px;
+  z-index: 1;
+  margin: 0;
+  padding: 0 10px;
+  background: var(--window-bg);
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1.4;
 }
 
-.next-link:hover .next-link__name,
-.next-link:focus-visible .next-link__name {
+.dq-dialog__inner {
+  max-height: calc(100dvh - 60px); /* 画面より高くならないように */
+  overflow: auto;                  /* 文章が長いときは中でスクロール */
+  padding: 30px 28px 18px;
+}
+
+/* 星の数（金色） */
+.dq-dialog__stars {
+  margin: 0 0 14px;
+  font-size: 20px;
+  letter-spacing: 0.12em;
   color: var(--accent-color);
 }
 
-.next-link:focus-visible {
-  outline: 2px dashed var(--accent-color);
-  outline-offset: 6px;
+/* 説明文。データの改行（\n）をそのまま改行として表示する */
+.dq-dialog__text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.9;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* 閉じるコマンド（右下） */
+.dq-dialog__commands {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.dq-dialog__close {
+  position: relative;
+  min-height: 44px;          /* スマホでもタップしやすい大きさ */
+  padding: 4px 4px 4px 26px; /* 左に ▶ カーソルのスペース */
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* 「▶ とじる」のカーソル。常に点滅させて「ここを押してね」と伝える */
+.dq-dialog__close::before {
+  content: "▶";
+  position: absolute;
+  left: 4px;
+  animation: dqBlink 0.8s steps(1) infinite;
+}
+
+.dq-dialog__close:hover,
+.dq-dialog__close:focus-visible {
+  color: var(--accent-color);
+  outline: none;
+}
+
+/* ポップアップが開いている間は、後ろのページをスクロールさせない */
+body.modal-open {
+  overflow: hidden;
 }
 
 
@@ -773,13 +942,19 @@ main {
   body.menu-open { overflow: hidden; }
 
   .section { padding: 110px 20px; }
-  .next-page { padding: 0 20px 80px; }
   .section-header { grid-template-columns: 1fr; gap: 16px; margin-bottom: 50px; }
   .section-title { font-size: 44px; }
+  .section-title--catch { font-size: clamp(24px, 6.6vw, 36px); }
 
   .profile-grid { grid-template-columns: 1fr; gap: 50px; }
   .profile-text { padding: 28px 20px 22px; }
   .profile-name { font-size: 32px; }
+  .stat { font-size: 16px; }
+  .stat__stars { font-size: 16px; }
+
+  /* 能力値のポップアップ */
+  .dq-dialog__inner { padding: 28px 18px 14px; }
+  .dq-dialog__text { font-size: 15px; }
 
   /* STRENGTH：3つの強みを縦1列に */
   .strength-list { grid-template-columns: 1fr; gap: 36px; }
@@ -790,12 +965,15 @@ main {
   .goal-hero__image { height: min(42vh, 340px); }
   .goal-hero::before { width: 380px; height: 380px; margin: -220px 0 0 -190px; }
   .goal-panels .dq-window { padding: 26px 18px 18px; }
-  .goal-status__row { font-size: 14px; }
 }
 
 
 /* 「動きを減らす」設定のユーザーには、MY GOAL の動きを止める */
 @media (prefers-reduced-motion: reduce) {
+  .dq-dialog[open] .dq-dialog__inner,
+  .dq-dialog[open] .dq-dialog__title,
+  .dq-dialog.is-closing .dq-dialog__inner,
+  .dq-dialog.is-closing .dq-dialog__title,
   .goal-hero::before,
   .goal-hero__image,
   .goal-quest__title::before,
