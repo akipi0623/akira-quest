@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>QUIZ | AKIRA QUEST</title>
+
+  <!-- 共通CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <!-- =========================
+       ページ遷移アニメーション
+  ========================== -->
+  <div class="page-transition"></div>
+
+
+  <!-- =========================
+       共通ヘッダー
+  ========================== -->
+  <header class="site-header">
+
+    <div class="header-inner">
+
+      <!-- ロゴ（クリックでトップへ） -->
+      <a href="index.html" class="logo">
+        AKIRA QUEST
+      </a>
+
+
+      <!-- ハンバーガーボタン（スマホのときだけ表示） -->
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="global-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+
+      <!-- メニュー（今いるページには aria-current="page" を付ける） -->
+      <nav class="navigation" id="global-nav">
+
+        <a href="index.html">
+          01 HOME
+        </a>
+
+        <a href="profile.html">
+          02 PROFILE
+        </a>
+
+        <a href="history.html">
+          03 HISTORY
+        </a>
+
+        <a href="quiz.html" aria-current="page">
+          04 QUIZ
+        </a>
+
+        <a href="future.html">
+          05 FUTURE
+        </a>
+
+      </nav>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =========================
+       QUIZ
+  ========================== -->
+
+  <main>
+
+    <section class="section">
+
+      <!-- ページタイトル -->
+
+      <div class="section-header reveal">
+
+        <p class="section-number">
+          04 / 05
+        </p>
+
+        <h1 class="section-title">
+          WHAT<br>
+          DO I VALUE?
+        </h1>
+
+      </div>
+
+
+      <!-- クイズ
+           問題文・選択肢は js/script.js の quizData に書いてあり、
+           JavaScriptがここに表示します。 -->
+
+      <div class="quiz-wrapper reveal">
+
+        <!-- 何問目か（例：QUESTION 01 / 03） -->
+        <p
+          id="quiz-progress"
+          class="quiz-progress">
+        </p>
+
+
+        <!-- 問題文 -->
+        <h2
+          id="quiz-question"
+          class="quiz-question">
+        </h2>
+
+
+        <!-- 選択肢のボタンが入る場所 -->
+        <div
+          id="quiz-options"
+          class="quiz-options">
+        </div>
+
+
+        <!-- クイズの結果 -->
+        <p
+          id="quiz-result"
+          class="quiz-result">
+        </p>
+
+
+        <!-- 次の問題へ / もう一度 ボタン（答えるまでは隠す） -->
+        <button
+          id="quiz-next"
+          class="quiz-next"
+          type="button"
+          hidden>
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =========================
+       JavaScript
+  ========================== -->
+
+  <script src="js/script.js"></script>
+
+</body>
+
+</html>

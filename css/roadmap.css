@@ -1,0 +1,747 @@
+/* ========================================
+   RPG風・人生ロードマップ（history.html 専用）
+
+   【デザインの考え方】
+   昔ながらのRPGの画面を、CSSだけで再現しています。
+     ・黒地＋白い角丸の枠      … 「ウィンドウ」（.dq-window）
+     ・ドット文字（DotGothic16）… 昔のゲームの文字
+     ・点滅する ▶ / ▼          … 「選べる」「続きがある」の合図
+     ・ドット絵（宝箱・城など）… JSが小さな四角を並べて描く
+
+   【重なり順（z-index）】
+     道（SVG）0 → マス 1 → 主人公のコマ 5
+======================================== */
+
+/* このコンポーネントで使う色やサイズを変数にまとめる
+   （ここを変えるだけで全体の雰囲気を調整できる）
+   ※ ポップアップ（.roadmap-modal）は .roadmap の外にあるので、
+     両方に変数を定義しておかないと、ポップアップから色が読めなくなる */
+.roadmap,
+.roadmap-modal {
+  --dq-black: #000000;     /* ウィンドウの地の色 */
+  --dq-white: #ffffff;     /* ウィンドウの枠・文字 */
+  --dq-gold: #ffd23f;      /* 強調（選択中・レベルアップ） */
+  --grass: #4fa34a;        /* 草原 */
+  --dirt: #d8b26a;         /* 土の道 */
+  --dirt-dark: #5b3a17;    /* 土の道のフチ */
+  --avatar-size: 60px;     /* 主人公のコマの大きさ */
+  --board-padding: 48px;   /* 盤の内側の余白（カーブがはみ出さないための余白） */
+}
+
+.roadmap {
+  max-width: 1080px;
+  margin: 0 auto;
+  font-family: "DotGothic16", "Hiragino Kaku Gothic ProN", monospace;
+}
+
+
+/* ※ 黒地＋白枠のウィンドウ（.dq-window）、枠の上の見出し（.dq-window__label）、
+     点滅アニメーション（dqBlink）は、全ページで使うので style.css にまとめてあります。 */
+
+
+/* ----------------------------------------
+   ゲーム画面全体（白い枠で囲んだ大きな画面）
+---------------------------------------- */
+
+.roadmap-screen {
+  padding: 32px 24px 24px;
+  background: var(--dq-black);
+  border: 4px solid var(--dq-white);
+  border-radius: 16px;
+}
+
+
+/* ----------------------------------------
+   上の情報エリア（つよさ・サウンド）
+---------------------------------------- */
+
+.roadmap-hud {
+  display: flex;
+  justify-content: space-between; /* 左に「つよさ」、右に「サウンド」 */
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.roadmap-status {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 220px;
+  padding: 16px 18px 12px;
+}
+
+/* ドット絵の顔を入れる枠 */
+.roadmap-status__face {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--dq-white);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #333;
+}
+
+.roadmap-status__info {
+  flex: 1;
+}
+
+.roadmap-status__name {
+  margin: 0 0 2px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* 「Lv   13」のように、項目名と数字を左右に振り分ける */
+.roadmap-status__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* サウンドのON/OFFボタン */
+.roadmap-sound {
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.roadmap-sound:hover,
+.roadmap-sound:focus-visible {
+  border-color: var(--dq-gold);
+  outline: none;
+}
+
+.roadmap-sound[aria-pressed="true"] {
+  color: var(--dq-gold);
+}
+
+
+/* ----------------------------------------
+   フィールド（空 → 草原 → 海）
+---------------------------------------- */
+
+.roadmap-field {
+  border: 4px solid var(--dq-black);
+  border-radius: 8px;
+  overflow: hidden; /* 角丸からはみ出した空や海を切り取る */
+}
+
+/* 空と、遠くの山・木 */
+.roadmap-scenery {
+  display: flex;
+  align-items: flex-end; /* 山や木を、地面（下側）にそろえる */
+  gap: 4px;
+  height: 64px;
+  padding: 0 8px;
+  overflow: hidden;      /* 右にはみ出した分は見せない */
+  background: linear-gradient(#3fa9f5, #9edcff);
+}
+
+.roadmap-scenery svg {
+  flex-shrink: 0;
+  height: 44px;
+  width: auto;           /* 高さに合わせて、元の比率のまま幅が決まる */
+}
+
+/* 木は山より少し小さく */
+.roadmap-scenery .is-tree {
+  height: 34px;
+}
+
+/* 下の海。白いドットの波模様を、小さなSVG画像のくり返しで描いている */
+.roadmap-sea {
+  height: 36px;
+  border-top: 6px solid #e8d38a; /* 砂浜 */
+  background-color: #2a63c9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='16' shape-rendering='crispEdges'%3E%3Cg fill='%23a9d4ff'%3E%3Crect x='4' y='6' width='4' height='2'/%3E%3Crect x='8' y='4' width='4' height='2'/%3E%3Crect x='12' y='6' width='2' height='2'/%3E%3Crect x='20' y='12' width='4' height='2'/%3E%3Crect x='24' y='10' width='4' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 32px 16px;
+  /* 波を横に流し続ける（steps でカクカク動かしてレトロに） */
+  animation: seaFlow 3s steps(8) infinite;
+}
+
+@keyframes seaFlow {
+  from { background-position: 0 0; }
+  to   { background-position: 32px 0; }
+}
+
+
+/* ----------------------------------------
+   すごろく盤（草原）
+
+   【S字カーブの仕組み（CSS側）】
+   盤は CSS Grid（マス目状のレイアウト）です。
+   列の数は --cols という変数で決め、JSが画面幅に合わせて 5/4/3 に変えます。
+   どのマスを何行目・何列目に置くかもJSが決めていて、
+   「1行目は左→右、2行目は右→左…」と交互に並べることで蛇行させています。
+---------------------------------------- */
+
+.roadmap-board {
+  /* position: relative にすると、中の position: absolute（道・コマ）が
+     「この盤の左上」を基準に配置されるようになる */
+  position: relative;
+
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 5), 1fr); /* 同じ幅の列を --cols 個 */
+  column-gap: 28px;
+  row-gap: 64px; /* 行と行の間を広めにとり、カーブの道を通す */
+
+  /* 上の余白は、1行目のマスの上に乗るコマが隠れないように多めに */
+  padding: 76px var(--board-padding) 64px;
+
+  /* 草原：草の色の上に、草むらのドット絵（小さなSVG）を敷きつめる */
+  background-color: var(--grass);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' shape-rendering='crispEdges'%3E%3Cg fill='%23357a31'%3E%3Crect x='6' y='8' width='2' height='4'/%3E%3Crect x='10' y='6' width='2' height='6'/%3E%3Crect x='14' y='8' width='2' height='4'/%3E%3Crect x='30' y='32' width='2' height='4'/%3E%3Crect x='34' y='30' width='2' height='6'/%3E%3Crect x='38' y='32' width='2' height='4'/%3E%3C/g%3E%3Cg fill='%2372c26a'%3E%3Crect x='24' y='16' width='2' height='2'/%3E%3Crect x='42' y='4' width='2' height='2'/%3E%3Crect x='4' y='38' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 48px 48px;
+}
+
+
+/* ----------------------------------------
+   道（SVG）
+   同じ形の線を3本重ねて「こげ茶のフチ → 土の道 → 足あとの点線」にしています。
+---------------------------------------- */
+
+.roadmap-road {
+  position: absolute;
+  inset: 0;              /* 盤いっぱいに広げる（top/right/bottom/left すべて 0） */
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 0;
+  pointer-events: none;  /* 道はクリックの邪魔をしない */
+}
+
+.roadmap-road path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.roadmap-road__edge {
+  stroke: var(--dirt-dark);
+  stroke-width: 36px;
+}
+
+.roadmap-road__body {
+  stroke: var(--dirt);
+  stroke-width: 28px;
+}
+
+.roadmap-road__line {
+  stroke: #a9803d;
+  stroke-width: 4px;
+  stroke-linecap: butt;     /* 端を四角に（ドットっぽく） */
+  stroke-dasharray: 4 12;   /* 4px描いて12px空ける＝点々の足あと */
+}
+
+
+/* ----------------------------------------
+   マス（タイル）共通
+---------------------------------------- */
+
+.roadmap-tile {
+  position: relative; /* カーソル（▶）やラベルを、このマス基準で置くため */
+  z-index: 1;
+
+  aspect-ratio: 1 / 1; /* 幅に合わせて高さを決め、常に正方形にする */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 0;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+/* 宝箱・家・城のドット絵を入れる場所 */
+.roadmap-tile__icon {
+  width: 44%;
+}
+
+.roadmap-tile__icon svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 年齢 */
+.roadmap-tile__age {
+  font-size: clamp(14px, 2vw, 22px); /* 画面幅に合わせて、最小14px〜最大22px */
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.roadmap-tile__age small {
+  margin-left: 2px;
+  font-size: 0.65em;
+}
+
+
+/* --- イベントのあるマス：RPGのウィンドウ風（クリックできる） --- */
+
+.roadmap-tile.is-event {
+  background: var(--dq-black);
+  color: var(--dq-white);
+  border: 3px solid var(--dq-white);
+  box-shadow:
+    0 0 0 3px var(--dq-black),         /* 黒い外フチ */
+    0 8px 0 3px rgba(0, 0, 0, 0.3);    /* 地面に落ちる影 */
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+/* マウスを乗せる／キーボードで選ぶと、金色の枠になって少し浮く
+   （コマが移動中のときは反応させない） */
+.roadmap-board:not(.is-moving) .roadmap-tile.is-event:hover,
+.roadmap-tile.is-event:focus-visible {
+  border-color: var(--dq-gold);
+  transform: translateY(-4px);
+  outline: none;
+}
+
+/* 選んでいるマスの左に、点滅する ▶ カーソルを出す（RPGのコマンド選択風） */
+.roadmap-board:not(.is-moving) .roadmap-tile.is-event:hover::before,
+.roadmap-tile.is-event:focus-visible::before {
+  content: "▶";
+  position: absolute;
+  top: 50%;
+  left: -24px;
+  transform: translateY(-50%);
+  color: var(--dq-white);
+  font-size: 18px;
+  text-shadow: 2px 2px 0 var(--dq-black); /* 草の上でも読めるように黒い影 */
+  animation: dqBlink 0.8s steps(1) infinite;
+}
+
+/* コマが移動中は「待ってね」のカーソルに */
+.roadmap-board.is-moving .roadmap-tile.is-event {
+  cursor: wait;
+}
+
+
+/* --- イベントのないマス：石だたみ（通過するだけ） --- */
+
+.roadmap-tile.is-blank {
+  background: #a59d8c;
+  color: #2b251c;
+  border: 3px solid #3d362b;
+  /* 内側の左上を明るく、右下を暗くして、石が盛り上がって見えるようにする */
+  box-shadow:
+    inset 4px 4px 0 rgba(255, 255, 255, 0.3),
+    inset -4px -4px 0 rgba(0, 0, 0, 0.25);
+}
+
+
+/* --- START / GOAL のマスは金色の枠 --- */
+
+.roadmap-tile.is-start,
+.roadmap-tile.is-goal {
+  border-color: var(--dq-gold);
+}
+
+
+/* --- 主人公がいるマス：足元が金色に光る --- */
+
+.roadmap-tile.is-current {
+  outline: 3px dashed var(--dq-gold);
+  outline-offset: 5px;
+}
+
+
+/* --- START / GOAL のラベル（小さなウィンドウ） --- */
+
+.roadmap-tile__badge {
+  position: absolute;
+  bottom: -15px;               /* マスの下辺に半分かかるように */
+  left: 50%;
+  transform: translateX(-50%); /* left: 50% だけだと左端が中央に来るので、自分の幅の半分戻して中央ぞろえ */
+  padding: 1px 10px;
+  background: var(--dq-black);
+  color: var(--dq-gold);
+  border: 2px solid var(--dq-white);
+  border-radius: 4px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+
+/* ----------------------------------------
+   主人公のコマ
+
+   【移動アニメーションの仕組み（CSS側）】
+   コマは盤の左上（top: 0; left: 0）に置いておき、
+   JSが transform: translate(横px, 縦px) で目的地までずらします。
+   transition を付けているので、値が変わると自動で「滑らかに」動きます。
+   1マスにかける時間は、JSが --step-duration に入れます。
+   RPGのキャラのように一定の速さで歩かせたいので、速さの変化は linear（等速）。
+---------------------------------------- */
+
+.roadmap-avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  pointer-events: none; /* コマの下のマスもクリックできるように */
+
+  /* transform は再計算が軽く、なめらかに動かしやすいプロパティ */
+  transition: transform var(--step-duration, 300ms) linear;
+}
+
+/* 画面サイズが変わったときなど、アニメーションさせずに一瞬で置きたいとき用 */
+.roadmap-avatar.is-instant {
+  transition: none;
+}
+
+/* 足元の影（コマが足踏みしても、影はその場に残る） */
+.roadmap-avatar::after {
+  content: "";
+  position: absolute;
+  left: 15%;
+  bottom: -8px;
+  width: 70%;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* 顔のフレーム（ドット絵っぽく四角く） */
+.roadmap-avatar__body {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--dq-white);
+  border-radius: 6px;
+  box-shadow: 0 0 0 3px var(--dq-black);
+  overflow: hidden;
+  background: var(--dq-black);
+
+  /* RPGのキャラのように、止まっていても「その場で足踏み」させる。
+     steps(2) で2コマだけのパラパラ漫画にするのがレトロさのコツ */
+  animation: heroWalk 0.6s steps(2) infinite;
+}
+
+/* 移動中は足踏みを速くする */
+.roadmap-board.is-moving .roadmap-avatar__body {
+  animation-duration: 0.24s;
+}
+
+@keyframes heroWalk {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-8px); } /* steps(2) なので 0px と -4px の2コマになる */
+}
+
+/* 写真（ドット絵に変換できるまでの仮表示） */
+.roadmap-avatar__body img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ドット絵に変換できたら、元の写真は隠す */
+.roadmap-avatar__body.is-pixelated img {
+  display: none;
+}
+
+/* ドット絵の顔（canvas）。
+   image-rendering: pixelated で、小さな絵を拡大したときに
+   ぼかさず「カクカクのドット」のまま表示する */
+.pixel-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+
+/* ----------------------------------------
+   メッセージウィンドウ
+---------------------------------------- */
+
+.roadmap-message {
+  margin-top: 24px;
+  padding: 18px 24px;
+  min-height: 100px;
+  cursor: pointer;
+}
+
+.roadmap-message__text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.8;
+  white-space: pre-wrap; /* 文章中の改行（\n）をそのまま改行として表示する */
+}
+
+/* 文字を全部出し終わったら、最後に点滅する ▼ を付ける */
+.roadmap-message__text.is-done::after,
+.roadmap-modal__text.is-done::after {
+  content: "▼";
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.7em;
+  animation: dqBlink 1s steps(1) infinite;
+}
+
+/* 画面には出さず、読み上げソフトだけに伝えるためのテクニック */
+.roadmap-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ----------------------------------------
+   ポップアップ（モーダル）
+
+   <dialog> は JSの showModal() で開くと、
+   ・ページの一番手前に表示される
+   ・後ろに ::backdrop（暗い幕）が自動で出る
+   ・Escキーで閉じる
+   という機能が最初から付いています。
+---------------------------------------- */
+
+.roadmap-modal {
+  width: calc(100% - 32px);  /* スマホでは左右16pxずつ空ける */
+  max-width: 600px;
+  /* 上に14px空けて、見出しを枠線にまたがらせるスペースにする */
+  padding: 14px 4px 4px;
+  border: none;
+  background: transparent;   /* 見た目は中の .dq-window に任せる */
+  overflow: visible;
+  font-family: "DotGothic16", "Hiragino Kaku Gothic ProN", monospace;
+}
+
+/* 開くときは、ウィンドウが上下にカクカク広がる（RPGの窓が開く感じ） */
+.roadmap-modal[open] .roadmap-modal__inner,
+.roadmap-modal[open] .roadmap-modal__title {
+  animation: dqWindowOpen 0.25s steps(5);
+}
+
+@keyframes dqWindowOpen {
+  from { transform: scaleY(0.05); }
+  to   { transform: scaleY(1); }
+}
+
+/* 後ろの暗い幕 */
+.roadmap-modal::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+/* 枠線にまたがる見出し（年齢） */
+.roadmap-modal__title {
+  position: absolute;
+  top: 0;
+  left: 30px;
+  z-index: 1;
+  margin: 0;
+  padding: 0 10px;
+  background: var(--dq-black);
+  color: var(--dq-white);
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+.roadmap-modal__inner {
+  max-height: calc(100dvh - 60px); /* 画面より高くならないように */
+  overflow: auto;                  /* 文章が長いときは中でスクロール */
+  padding: 30px 28px 20px;
+}
+
+/* 「レベルが あがった！」の一言 */
+.roadmap-modal__levelup {
+  margin: 0 0 16px;
+  color: var(--dq-gold);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* 写真の枠。aspect-ratio で比率を固定しているので、
+   画像があってもなくても枠の大きさが変わらず、レイアウトが崩れない */
+.roadmap-modal__figure {
+  position: relative;
+  margin: 0 0 18px;
+  aspect-ratio: 4 / 3;
+  border: 3px solid var(--dq-white);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+/* 画像がないときに見える中身（写真の下に敷いておく） */
+.roadmap-modal__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #c9c9d6;
+  font-size: 14px;
+}
+
+.roadmap-modal__placeholder-mark {
+  font-size: 40px;
+  letter-spacing: 0.2em;
+  color: var(--dq-white);
+}
+
+/* 写真はプレースホルダーの上にぴったり重ねる */
+.roadmap-modal__image {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* style.css の img { display: block; } が hidden 属性より強いため、
+   hidden のときは確実に消えるように指定し直す */
+.roadmap-modal__image[hidden] {
+  display: none;
+}
+
+.roadmap-modal__text {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  cursor: pointer;
+}
+
+/* 閉じるコマンド（右下） */
+.roadmap-modal__commands {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.roadmap-modal__close {
+  position: relative;
+  padding: 4px 4px 4px 26px; /* 左に ▶ カーソルのスペース */
+  border: none;
+  background: none;
+  color: var(--dq-white);
+  font-family: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* 「▶ とじる」のカーソル。常に点滅させて「ここを押してね」と伝える */
+.roadmap-modal__close::before {
+  content: "▶";
+  position: absolute;
+  left: 4px;
+  animation: dqBlink 0.8s steps(1) infinite;
+}
+
+.roadmap-modal__close:hover,
+.roadmap-modal__close:focus-visible {
+  color: var(--dq-gold);
+  outline: none;
+}
+
+/* モーダルが開いている間は、後ろのページをスクロールさせない */
+body.modal-open {
+  overflow: hidden;
+}
+
+
+/* ----------------------------------------
+   レスポンシブ（スマホ）
+---------------------------------------- */
+
+@media screen and (max-width: 768px) {
+  .roadmap {
+    --avatar-size: 44px;
+    --board-padding: 32px;
+  }
+
+  .roadmap-screen {
+    padding: 20px 10px 12px;
+    border-width: 4px;
+    border-radius: 12px;
+  }
+
+  /* 「つよさ」とサウンドを縦に並べる */
+  .roadmap-hud {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .roadmap-status {
+    min-width: 0;
+  }
+
+  .roadmap-sound {
+    align-self: flex-end;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .roadmap-scenery {
+    height: 48px;
+  }
+
+  .roadmap-scenery svg {
+    height: 32px;
+  }
+
+  .roadmap-scenery .is-tree {
+    height: 24px;
+  }
+
+  .roadmap-board {
+    column-gap: 16px;
+    row-gap: 52px;
+    padding-top: 64px;
+  }
+
+  .roadmap-road__edge { stroke-width: 28px; }
+  .roadmap-road__body { stroke-width: 20px; }
+
+  .roadmap-tile__icon { width: 46%; }
+
+  .roadmap-message {
+    margin-top: 18px;
+    padding: 14px 16px;
+  }
+
+  .roadmap-message__text { font-size: 15px; }
+
+  .roadmap-modal__inner { padding: 28px 18px 16px; }
+  .roadmap-modal__text { font-size: 15px; }
+}
+
+
+/* ----------------------------------------
+   「動きを減らす」設定のユーザーには、アニメーションを止める
+   （OSの設定で、画面の動きが苦手な人が選べる項目）
+---------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .roadmap-avatar,
+  .roadmap-avatar__body,
+  .roadmap-sea,
+  .roadmap-modal[open] .roadmap-modal__inner,
+  .roadmap-modal[open] .roadmap-modal__title {
+    animation: none;
+    transition: none;
+  }
+}

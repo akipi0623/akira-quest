@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>HISTORY | AKIRA QUEST</title>
+
+  <!-- CSSを読み込む -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- RPG風ロードマップ専用のCSS（このページだけで使うので別ファイルにしています） -->
+  <link rel="stylesheet" href="css/roadmap.css">
+</head>
+
+<body>
+
+  <!-- ページ遷移用 -->
+  <div class="page-transition"></div>
+
+
+  <!-- =========================
+       共通ヘッダー
+  ========================== -->
+  <header class="site-header">
+
+    <div class="header-inner">
+
+      <!-- ロゴ（クリックでトップへ） -->
+      <a href="index.html" class="logo">
+        AKIRA QUEST
+      </a>
+
+
+      <!-- ハンバーガーボタン（スマホのときだけ表示） -->
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="global-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+
+      <!-- メニュー（今いるページには aria-current="page" を付ける） -->
+      <nav class="navigation" id="global-nav">
+
+        <a href="index.html">
+          01 HOME
+        </a>
+
+        <a href="profile.html">
+          02 PROFILE
+        </a>
+
+        <a href="history.html" aria-current="page">
+          03 HISTORY
+        </a>
+
+        <a href="quiz.html">
+          04 QUIZ
+        </a>
+
+        <a href="future.html">
+          05 FUTURE
+        </a>
+
+      </nav>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =========================
+       HISTORY
+  ========================== -->
+
+  <main>
+
+    <section class="section">
+
+      <div class="section-header reveal">
+
+        <p class="section-number">
+          03 / 05
+        </p>
+
+        <h1 class="section-title">
+          MY<br>
+          HISTORY.
+        </h1>
+
+      </div>
+
+
+      <!-- =========================
+           RPG風・人生ロードマップ
+           マスや飾りの中身は js/roadmap.js が自動で作ります。
+      ========================== -->
+
+      <div class="roadmap reveal">
+
+        <!-- ゲーム画面全体（黒いフチのモニター） -->
+        <div class="roadmap-screen">
+
+
+          <!-- 上の情報エリア（HUD = ゲーム画面に重ねて表示する情報のこと） -->
+          <div class="roadmap-hud">
+
+            <!-- 「つよさ」ウィンドウ -->
+            <div class="dq-window roadmap-status">
+
+              <!-- 枠線の上に乗っている見出し -->
+              <p class="dq-window__label">
+                つよさ
+              </p>
+
+              <!-- ドット絵になった顔（JSが描きます） -->
+              <div
+                id="roadmap-status-face"
+                class="roadmap-status__face">
+              </div>
+
+              <div class="roadmap-status__info">
+                <p
+                  id="roadmap-status-name"
+                  class="roadmap-status__name">
+                </p>
+                <p class="roadmap-status__row">
+                  <span>Lv</span>
+                  <span id="roadmap-status-level">0</span>
+                </p>
+                <p class="roadmap-status__row">
+                  <span>EXP</span>
+                  <span id="roadmap-status-exp">0</span>
+                </p>
+              </div>
+
+            </div>
+
+
+            <!-- 効果音のON/OFF（最初はOFF） -->
+            <button
+              id="roadmap-sound"
+              class="dq-window roadmap-sound"
+              type="button"
+              aria-pressed="false">
+              ♪ サウンド：OFF
+            </button>
+
+          </div>
+
+
+          <!-- フィールド（空・草原・海） -->
+          <div class="roadmap-field">
+
+            <!-- 空と、遠くの山や木（JSがドット絵を並べます） -->
+            <div
+              id="roadmap-scenery"
+              class="roadmap-scenery"
+              aria-hidden="true">
+            </div>
+
+
+            <!-- すごろく盤（草原）。マス・道・コマはすべてこの中 -->
+            <div
+              id="roadmap-board"
+              class="roadmap-board">
+
+              <!-- 道（S字カーブ）を描くSVG。線の形はJSが計算して描きます -->
+              <svg
+                class="roadmap-road"
+                aria-hidden="true">
+                <path class="roadmap-road__edge"></path>
+                <path class="roadmap-road__body"></path>
+                <path class="roadmap-road__line"></path>
+              </svg>
+
+              <!-- ここにJSがマス（ボタン）を追加します -->
+
+              <!-- 主人公のコマ。読み込んだ写真をJSがドット絵に変換します -->
+              <div
+                id="roadmap-avatar"
+                class="roadmap-avatar"
+                aria-hidden="true">
+                <div class="roadmap-avatar__body">
+                  <img
+                    src="images/my-avatar.jpg"
+                    alt="">
+                </div>
+              </div>
+
+            </div>
+
+
+            <!-- 下の海 -->
+            <div
+              class="roadmap-sea"
+              aria-hidden="true">
+            </div>
+
+          </div>
+
+
+          <!-- メッセージウィンドウ（クリックすると文字送りをスキップ） -->
+          <div
+            id="roadmap-message"
+            class="dq-window roadmap-message">
+
+            <!-- 1文字ずつ表示される文章（見た目用） -->
+            <p
+              id="roadmap-message-text"
+              class="roadmap-message__text"
+              aria-hidden="true">
+            </p>
+
+            <!-- 画面読み上げソフト用に、同じ文章を一度にまとめて伝える場所（画面には出ない） -->
+            <p
+              id="roadmap-message-live"
+              class="roadmap-sr-only"
+              aria-live="polite">
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           エピソードのポップアップ（モーダル）
+           <dialog> はブラウザに最初から用意されている
+           「ポップアップ専用」のHTMLタグです。
+      ========================== -->
+
+      <dialog
+        id="roadmap-modal"
+        class="roadmap-modal"
+        aria-labelledby="roadmap-modal-title">
+
+        <!-- 枠線の上に乗る見出し（年齢） -->
+        <h2
+          id="roadmap-modal-title"
+          class="roadmap-modal__title">
+        </h2>
+
+        <div class="dq-window roadmap-modal__inner">
+
+          <!-- 「レベルが あがった！」などの一言 -->
+          <p class="roadmap-modal__levelup"></p>
+
+          <!-- 写真。画像がない・読み込めないときは下のプレースホルダーが見えます -->
+          <figure class="roadmap-modal__figure">
+
+            <div class="roadmap-modal__placeholder">
+              <span class="roadmap-modal__placeholder-mark">？？？</span>
+              <span>しゃしんは まだ ないようだ…</span>
+            </div>
+
+            <img
+              class="roadmap-modal__image"
+              alt=""
+              hidden>
+
+          </figure>
+
+          <!-- エピソード文章（1文字ずつ表示。クリックでスキップ） -->
+          <p class="roadmap-modal__text"></p>
+
+          <!-- 閉じるコマンド -->
+          <div class="roadmap-modal__commands">
+            <button
+              class="roadmap-modal__close"
+              type="button">
+              とじる
+            </button>
+          </div>
+
+        </div>
+
+      </dialog>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =========================
+       JavaScript
+  ========================== -->
+
+  <script src="js/script.js"></script>
+
+  <!-- すごろくロードマップの動き（このページだけで使います） -->
+  <script src="js/roadmap.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FUTURE | AKIRA QUEST</title>
+
+  <!-- 共通CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <!-- =========================
+       ページ遷移アニメーション
+  ========================== -->
+  <div class="page-transition"></div>
+
+
+  <!-- =========================
+       共通ヘッダー
+  ========================== -->
+  <header class="site-header">
+
+    <div class="header-inner">
+
+      <!-- ロゴ（クリックでトップへ） -->
+      <a href="index.html" class="logo">
+        AKIRA QUEST
+      </a>
+
+
+      <!-- ハンバーガーボタン（スマホのときだけ表示） -->
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="global-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+
+      <!-- メニュー（今いるページには aria-current="page" を付ける） -->
+      <nav class="navigation" id="global-nav">
+
+        <a href="index.html">
+          01 HOME
+        </a>
+
+        <a href="profile.html">
+          02 PROFILE
+        </a>
+
+        <a href="history.html">
+          03 HISTORY
+        </a>
+
+        <a href="quiz.html">
+          04 QUIZ
+        </a>
+
+        <a href="future.html" aria-current="page">
+          05 FUTURE
+        </a>
+
+      </nav>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =========================
+       FUTURE
+  ========================== -->
+
+  <main>
+
+    <section class="section future-hero">
+
+      <div>
+
+        <!-- ページ番号 -->
+
+        <p class="section-number reveal">
+          05 / 05
+        </p>
+
+
+        <!-- 大きなタイトル -->
+
+        <h1 class="future-title reveal">
+          THE<br>
+          FUTURE<br>
+          I WANT.
+        </h1>
+
+
+        <!-- 未来について -->
+
+        <p class="future-text reveal">
+
+          僕が目指しているのは、
+          ○○な未来です。
+
+          <br><br>
+
+          そのために今、
+          ○○に挑戦しています。
+
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =========================
+       JavaScript
+  ========================== -->
+
+  <script src="js/script.js"></script>
+
+</body>
+
+</html>
