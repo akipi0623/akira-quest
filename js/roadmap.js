@@ -23,7 +23,7 @@
 ======================================== */
 
 // 主人公の名前（「つよさ」ウィンドウやメッセージに出ます。好きな名前に変えてOK）
-const ROADMAP_HERO_NAME = "ゆうしゃ";
+const ROADMAP_HERO_NAME = "AKIRA";
 
 // hasEvent: true  … クリックできるイベントマス（宝箱）
 // hasEvent: false … 通過するだけのマス（石だたみ）

@@ -68,13 +68,207 @@
       class="opening-screen opening-start"
       type="button">
 
-      <span class="opening-start__sub">〜 じんせいの ぼうけん 〜</span>
+      <!-- 背景の風景（オリジナルのイラストを SVG で描いたもの）
+           SVG は「図形を数値で描く画像」。拡大してもぼやけず、ファイルも軽い。
+           viewBox="0 0 1600 900" … 横1600×縦900 の紙に描いている、という意味。
+           preserveAspectRatio="xMidYMax slice" … 画面の縦横比が違っても、
+             すき間ができないように拡大して、はみ出た分は切り取る（下と中央を基準にする） -->
+      <svg
+        class="opening-scene"
+        viewBox="0 0 1600 900"
+        preserveAspectRatio="xMidYMax slice"
+        aria-hidden="true">
 
-      <span class="opening-start__title">AKIRA QUEST</span>
+        <defs>
+          <!-- 空のグラデーション（上ほど濃い青 → 地平線に向かって明るく） -->
+          <linearGradient id="scene-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2f7fd8" />
+            <stop offset="0.55" stop-color="#8cc8f2" />
+            <stop offset="1" stop-color="#e3f4ff" />
+          </linearGradient>
 
-      <span class="opening-start__press">▶ がめんを クリックして スタート</span>
+          <!-- 左上からさしこむ光 -->
+          <radialGradient id="scene-sun" cx="0.15" cy="0.08" r="0.55">
+            <stop offset="0" stop-color="#ffffff" stop-opacity="0.85" />
+            <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+          </radialGradient>
 
-      <span class="opening-start__note">※ おとが でます</span>
+          <!-- 遠くの山（空気で青白くかすんで見える色） -->
+          <linearGradient id="scene-far" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#8fb0d6" />
+            <stop offset="1" stop-color="#bcd6ec" />
+          </linearGradient>
+
+          <!-- 川 -->
+          <linearGradient id="scene-river" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9fdaf8" />
+            <stop offset="1" stop-color="#4c9fd8" />
+          </linearGradient>
+
+          <!-- 雲の形（symbol ＝ 何度も使い回せる部品） -->
+          <symbol id="scene-cloud" viewBox="0 0 200 80">
+            <ellipse cx="60" cy="50" rx="58" ry="26" fill="#ffffff" />
+            <ellipse cx="108" cy="36" rx="48" ry="32" fill="#ffffff" />
+            <ellipse cx="148" cy="52" rx="46" ry="24" fill="#ffffff" />
+            <ellipse cx="100" cy="60" rx="90" ry="18" fill="#f1f8ff" />
+          </symbol>
+
+          <!-- 木の形 -->
+          <symbol id="scene-tree" viewBox="0 0 100 140">
+            <rect x="44" y="88" width="12" height="52" fill="#6b4a2b" />
+            <circle cx="50" cy="56" r="38" fill="#2f7d32" />
+            <circle cx="30" cy="70" r="26" fill="#2f7d32" />
+            <circle cx="72" cy="70" r="26" fill="#2a6f2d" />
+            <circle cx="40" cy="44" r="20" fill="#4c9f45" />
+            <circle cx="62" cy="38" r="14" fill="#5fb455" />
+          </symbol>
+
+          <!-- 手前の草むら -->
+          <symbol id="scene-tuft" viewBox="0 0 60 40">
+            <path d="M0 40 L10 8 L16 40 Z M14 40 L26 0 L32 40 Z M30 40 L42 10 L48 40 Z M44 40 L56 16 L60 40 Z" fill="#2f7a2b" />
+          </symbol>
+        </defs>
+
+
+        <!-- 空と光 -->
+        <rect width="1600" height="900" fill="url(#scene-sky)" />
+        <rect width="1600" height="900" fill="url(#scene-sun)" />
+
+
+        <!-- 雲（CSSでゆっくり横に流す） -->
+        <g class="opening-scene__clouds">
+          <use href="#scene-cloud" x="140" y="70" width="300" height="120" />
+          <use href="#scene-cloud" x="880" y="40" width="380" height="150" />
+          <use href="#scene-cloud" x="1260" y="160" width="240" height="96" opacity="0.9" />
+          <use href="#scene-cloud" x="520" y="180" width="200" height="80" opacity="0.85" />
+        </g>
+
+
+        <!-- 鳥 -->
+        <g fill="none" stroke="#2c3e57" stroke-width="3" stroke-linecap="round">
+          <path d="M1120 230 q8 -8 16 0 q8 -8 16 0" />
+          <path d="M1160 210 q6 -6 12 0 q6 -6 12 0" />
+          <path d="M1095 250 q5 -5 10 0 q5 -5 10 0" />
+        </g>
+
+
+        <!-- 遠くの山々（雪をかぶった山頂つき） -->
+        <path d="M0 400 L140 300 L250 350 L390 230 L520 330 L640 270 L760 345 L900 260 L1030 330 L1180 220 L1320 320 L1450 260 L1600 340 L1600 480 L0 480 Z" fill="url(#scene-far)" />
+        <path d="M390 230 L362 255 L378 252 L392 266 L406 252 L420 256 Z" fill="#ffffff" opacity="0.85" />
+        <path d="M1180 220 L1150 247 L1166 244 L1182 258 L1196 244 L1212 248 Z" fill="#ffffff" opacity="0.85" />
+        <path d="M900 260 L878 280 L892 278 L902 288 L912 278 L924 281 Z" fill="#ffffff" opacity="0.8" />
+
+
+        <!-- 近くの山なみ（緑がかった色） -->
+        <path d="M0 440 C180 360 330 400 470 370 C600 340 680 390 760 380 L840 380 C940 395 1050 340 1180 360 C1330 385 1450 340 1600 380 L1600 520 L0 520 Z" fill="#6f9f86" />
+
+
+        <!-- お城の建つ丘 -->
+        <path d="M540 440 Q690 345 800 362 Q910 345 1060 440 Z" fill="#6aa94f" />
+
+
+        <!-- 丘の上のお城（冒険の目的地） -->
+        <g>
+          <!-- 城壁 -->
+          <rect x="748" y="320" width="104" height="56" fill="#cdbb9f" />
+          <rect x="800" y="320" width="52" height="56" fill="#b4a286" />
+          <!-- 城壁のでこぼこ（狭間） -->
+          <path d="M748 320 v-8 h10 v8 h10 v-8 h10 v8 h10 v-8 h10 v8 h10 v-8 h10 v8 h10 v-8 h10 v8 h10 v-8 h4 v8 Z" fill="#cdbb9f" />
+          <!-- 中央の塔と屋根 -->
+          <rect x="780" y="286" width="40" height="40" fill="#d8c7ab" />
+          <polygon points="776,288 800,252 824,288" fill="#3f6fb5" />
+          <!-- 左右の塔と屋根 -->
+          <rect x="720" y="282" width="36" height="96" fill="#d8c7ab" />
+          <rect x="844" y="282" width="36" height="96" fill="#b4a286" />
+          <polygon points="714,284 738,240 762,284" fill="#3f6fb5" />
+          <polygon points="838,284 862,240 886,284" fill="#345f9c" />
+          <!-- 旗 -->
+          <line x1="738" y1="240" x2="738" y2="218" stroke="#5a4a3a" stroke-width="3" />
+          <polygon points="738,218 758,224 738,231" fill="#e23b2e" />
+          <line x1="862" y1="240" x2="862" y2="218" stroke="#5a4a3a" stroke-width="3" />
+          <polygon points="862,218 882,224 862,231" fill="#e23b2e" />
+          <line x1="800" y1="252" x2="800" y2="232" stroke="#5a4a3a" stroke-width="3" />
+          <polygon points="800,232 820,238 800,245" fill="#ffd23f" />
+          <!-- 窓と門 -->
+          <rect x="734" y="300" width="8" height="14" rx="4" fill="#4a3a2e" />
+          <rect x="858" y="300" width="8" height="14" rx="4" fill="#4a3a2e" />
+          <rect x="796" y="296" width="8" height="14" rx="4" fill="#4a3a2e" />
+          <path d="M786 376 v-22 a14 14 0 0 1 28 0 v22 Z" fill="#4a3a2e" />
+        </g>
+
+
+        <!-- 遠くの木（丘のまわり） -->
+        <use href="#scene-tree" x="590" y="384" width="40" height="56" />
+        <use href="#scene-tree" x="630" y="396" width="36" height="50" />
+        <use href="#scene-tree" x="950" y="388" width="40" height="56" />
+        <use href="#scene-tree" x="990" y="400" width="34" height="48" />
+
+
+        <!-- 中ほどの草原 -->
+        <path d="M0 470 C250 420 450 470 640 440 C760 420 840 425 960 440 C1150 465 1350 420 1600 455 L1600 900 L0 900 Z" fill="#86c55e" />
+
+
+        <!-- 中ほどの木 -->
+        <use href="#scene-tree" x="160" y="400" width="90" height="126" />
+        <use href="#scene-tree" x="250" y="430" width="70" height="98" />
+        <use href="#scene-tree" x="1290" y="400" width="90" height="126" />
+        <use href="#scene-tree" x="1380" y="425" width="74" height="104" />
+
+
+        <!-- 川 -->
+        <path d="M0 610 C300 580 520 640 800 615 C1080 590 1300 640 1600 605 L1600 650 C1300 690 1080 640 800 662 C520 685 300 630 0 660 Z" fill="url(#scene-river)" />
+        <path d="M120 622 C260 606 360 628 470 630 M980 618 C1100 606 1220 624 1340 628" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="18 14" opacity="0.6" />
+
+
+        <!-- 手前の草原 -->
+        <path d="M0 660 C300 630 520 685 800 662 C1080 640 1300 690 1600 650 L1600 900 L0 900 Z" fill="#66b54a" />
+
+
+        <!-- お城へ続く道（手前ほど太く、奥ほど細く描いて遠近感を出す） -->
+        <path d="M650 900 C700 840 760 820 775 780 C790 740 700 730 710 700 C720 670 760 660 770 640 C780 610 840 590 836 560 C832 525 760 510 762 480 C764 450 795 420 796 376 L804 376 C805 420 778 450 778 480 C778 510 868 525 864 560 C860 595 812 615 810 640 C808 665 775 680 770 700 C765 730 870 740 865 780 C860 830 820 850 870 900 Z" fill="#dcc48c" stroke="#b8975a" stroke-width="3" />
+
+
+        <!-- 川にかかる橋 -->
+        <rect x="748" y="618" width="84" height="40" rx="4" fill="#9b6b3a" />
+        <path d="M762 618 v40 M776 618 v40 M790 618 v40 M804 618 v40 M818 618 v40" stroke="#7a522b" stroke-width="2" />
+        <rect x="744" y="612" width="92" height="8" rx="3" fill="#7a522b" />
+
+
+        <!-- 手前の大きな木 -->
+        <use href="#scene-tree" x="-60" y="470" width="260" height="364" />
+        <use href="#scene-tree" x="130" y="560" width="170" height="238" />
+        <use href="#scene-tree" x="1420" y="470" width="240" height="336" />
+
+
+        <!-- 手前の草むら -->
+        <use href="#scene-tuft" x="30" y="850" width="90" height="60" />
+        <use href="#scene-tuft" x="260" y="860" width="70" height="46" />
+        <use href="#scene-tuft" x="470" y="855" width="80" height="54" />
+        <use href="#scene-tuft" x="980" y="858" width="80" height="54" />
+        <use href="#scene-tuft" x="1180" y="852" width="90" height="60" />
+        <use href="#scene-tuft" x="1500" y="856" width="80" height="54" />
+      </svg>
+
+
+      <!-- 主人公 AKIRA（背景を透明にしたイラスト） -->
+      <img
+        class="opening-hero"
+        src="images/akira-hero.webp"
+        alt="">
+
+
+      <!-- タイトルロゴ -->
+      <span class="opening-start__logo">
+        <span class="opening-start__sub">〜 じんせいの ぼうけん 〜</span>
+        <span class="opening-start__title">AKIRA QUEST</span>
+      </span>
+
+
+      <!-- 「クリックしてスタート」のウィンドウ -->
+      <span class="dq-window opening-start__window">
+        <span class="opening-start__press">▶ がめんを クリックして スタート</span>
+        <span class="opening-start__note">※ おとが でます</span>
+      </span>
 
     </button>
 
@@ -89,31 +283,23 @@
         <p
           id="opening-save-heading"
           class="opening-save__heading">
-          ぼうけんのしょを えらんでください
+          ぼうけんのしょ「MY STORY」<br>
+          どこから はじめますか？
         </p>
 
-        <!-- 選択肢。↑↓キーでカーソル移動、Enterで決定（JSで操作） -->
+        <!-- 選択肢。ヘッダーのメニュー（PC・スマホ共通）と同じ項目・同じ順番にしている。
+             ↑↓キーでカーソル移動、Enterで決定（JSで操作）
+             ・data-href がない項目（HOME）… オープニングを閉じて、このページの本編を表示
+             ・data-href がある項目        … そのページへ移動 -->
         <ul
           id="opening-menu"
           class="opening-menu">
 
-          <!-- メインの選択肢：本編（トップページ）へ -->
-          <li>
-            <button
-              class="opening-menu__item is-main"
-              type="button">
-              <span class="opening-menu__name">MY STORY</span>
-              <span class="opening-menu__info">AKIRA の じんせいの きろく</span>
-            </button>
-          </li>
-
-          <!-- 各ページへ直接ジャンプする選択肢（data-href に行き先を書く） -->
           <li>
             <button
               class="opening-menu__item"
-              type="button"
-              data-href="history.html">
-              <span class="opening-menu__name">HISTORY</span>
+              type="button">
+              <span class="opening-menu__name">01 HOME</span>
             </button>
           </li>
 
@@ -122,7 +308,34 @@
               class="opening-menu__item"
               type="button"
               data-href="profile.html">
-              <span class="opening-menu__name">PROFILE</span>
+              <span class="opening-menu__name">02 PROFILE</span>
+            </button>
+          </li>
+
+          <li>
+            <button
+              class="opening-menu__item"
+              type="button"
+              data-href="history.html">
+              <span class="opening-menu__name">03 HISTORY</span>
+            </button>
+          </li>
+
+          <li>
+            <button
+              class="opening-menu__item"
+              type="button"
+              data-href="strength.html">
+              <span class="opening-menu__name">04 STRENGTH</span>
+            </button>
+          </li>
+
+          <li>
+            <button
+              class="opening-menu__item"
+              type="button"
+              data-href="quiz.html">
+              <span class="opening-menu__name">05 QUIZ</span>
             </button>
           </li>
 
@@ -131,7 +344,7 @@
               class="opening-menu__item"
               type="button"
               data-href="future.html">
-              <span class="opening-menu__name">FUTURE</span>
+              <span class="opening-menu__name">06 MY GOAL</span>
             </button>
           </li>
 
@@ -192,12 +405,16 @@
           03 HISTORY
         </a>
 
+        <a href="strength.html">
+          04 STRENGTH
+        </a>
+
         <a href="quiz.html">
-          04 QUIZ
+          05 QUIZ
         </a>
 
         <a href="future.html">
-          05 FUTURE
+          06 MY GOAL
         </a>
 
       </nav>
@@ -216,10 +433,6 @@
 
     <section class="hero">
 
-      <!-- 見え隠れする自分（.hero-number を削除して差し替え） -->
-      <div class="mini-me" title="見つけた！">🙋‍♂️</div>
-
-
       <h1 class="hero-title reveal">
 
         <span>THIS</span>
@@ -235,7 +448,7 @@
 
       <p class="hero-subtitle reveal">
 
-        はじめまして。○○です。<br>
+        はじめまして。小山 央（こやま あきら）です。<br>
 
         これまでの人生、今の価値観、
         そしてこれから目指している未来。
@@ -262,83 +475,16 @@
       </div>
 
 
-      <a
-        href="profile.html"
-        class="text-link reveal">
-
-        ABOUT ME
-
-        <span>→</span>
-
-      </a>
-
-    </section>
-
-
-    <!-- INTRO -->
-
-    <section class="section">
-
-      <div class="section-header reveal">
-
-        <p class="section-number">
-          01 / 05
-        </p>
-
-        <h2 class="section-title">
-          Nice to<br>
-          meet you.
-        </h2>
-
-      </div>
-
-
-      <div class="profile-grid reveal">
-
-        <div class="image-wrap">
-
-          <img
-            class="profile-image"
-            src="images/profile.jpg"
-            alt="プロフィール写真">
-
-        </div>
-
-
-        <div class="profile-text">
-
-          <p class="profile-name">
-            ○○ ○○
-          </p>
-
-          <p class="profile-description">
-
-            はじめまして。○○です。<br><br>
-
-            このサイトでは、
-            僕がどんな人間なのか、
-            どんな経験をしてきたのか、
-            そしてこれから何を目指しているのかを
-            紹介しています。
-
-          </p>
-
-
-          <a
-            href="profile.html"
-            class="text-link">
-
-            PROFILE
-
-            <span>→</span>
-
-          </a>
-
-        </div>
-
+      <!-- つぎのページへの道しるべ（全ページ共通・右下に表示） -->
+      <div class="next-page reveal">
+        <a href="profile.html" class="next-link">
+          <span class="next-link__label">つぎの ぼうけんへ</span>
+          <span class="next-link__name">PROFILE</span>
+        </a>
       </div>
 
     </section>
+
 
 
   </main>

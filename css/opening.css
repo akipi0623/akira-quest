@@ -137,17 +137,19 @@ main {
    STEP 1：スタート待機画面
 ---------------------------------------- */
 
-/* 画面全体を覆う大きなボタン。ボタンの見た目（枠や背景）を全部消している */
+/* 画面全体を覆う大きなボタン。ボタンの見た目（枠や背景）を全部消している。
+   中の「風景・主人公・ロゴ・ウィンドウ」は position: absolute で重ねて配置する。
+   重なり順（z-index）：風景 0 → 主人公 1 → ロゴ 2 → ウィンドウ 3 */
 .opening-start {
   width: 100%;
   height: 100%;
-  gap: 16px;
-  padding: 20px;
-  background: none;
+  padding: 0;
+  background: #000;
   border: none;
   color: inherit;
   font-family: inherit;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .opening-start:focus-visible {
@@ -158,26 +160,115 @@ main {
   color: var(--accent-color);
 }
 
-.opening-start__sub {
-  font-size: clamp(14px, 2vw, 18px);
-  letter-spacing: 0.3em;
-  color: #c9c9c9;
+
+/* --- 背景の風景（SVG） --- */
+
+.opening-scene {
+  position: absolute;
+  inset: 0;           /* 画面いっぱいに広げる */
+  width: 100%;
+  height: 100%;
+  z-index: 0;
 }
 
-/* タイトルロゴ。濃い金色の影を右下にずらして重ね、立体的なゲームロゴ風にする */
+/* 雲を、左右にゆっくり行ったり来たりさせる（alternate ＝ 往復） */
+.opening-scene__clouds {
+  animation: sceneClouds 40s ease-in-out infinite alternate;
+}
+
+@keyframes sceneClouds {
+  from { transform: translateX(-40px); }
+  to   { transform: translateX(60px); }
+}
+
+
+/* --- 主人公 AKIRA --- */
+
+.opening-hero {
+  position: absolute;
+  right: 7vw;
+  bottom: 0;
+  z-index: 1;
+  width: auto;                    /* style.css の img { width: 100% } を打ち消し、高さに合わせる */
+  height: min(72vh, 640px);       /* 画面の高さの72%、ただし最大640px */
+  /* 足元に影を落として、地面に立っているように見せる */
+  filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.35));
+  /* 息をしているように、ほんの少しだけ上下させる */
+  animation: heroBreath 3.2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes heroBreath {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+
+/* --- タイトルロゴ --- */
+
+.opening-start__logo {
+  position: absolute;
+  top: 5vh;
+  left: 0;
+  right: 0;           /* 左右0にすると横いっぱいの箱になり、中を中央ぞろえできる */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  /* ページを開いたとき、上からカクカク落ちてくる */
+  animation: logoDrop 1s steps(10);
+}
+
+@keyframes logoDrop {
+  from { transform: translateY(-60px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+.opening-start__sub {
+  font-size: clamp(14px, 2vw, 20px);
+  letter-spacing: 0.3em;
+  color: #ffffff;
+  /* 明るい空の上でも読めるように、上下左右に黒いフチを付ける */
+  text-shadow:
+    2px 0 0 #1b2a40, -2px 0 0 #1b2a40,
+    0 2px 0 #1b2a40, 0 -2px 0 #1b2a40;
+}
+
+/* タイトルロゴ：金色の文字に「黒いフチ」＋「右下にずらした茶色の影」を重ね、
+   立体的なゲームのロゴのように見せる（text-shadow は何個でも重ねられる） */
 .opening-start__title {
-  font-size: clamp(44px, 10vw, 120px);
+  font-size: clamp(44px, 10vw, 128px);
   line-height: 1.1;
   letter-spacing: 0.08em;
   color: var(--accent-color);
   text-shadow:
-    4px 4px 0 #8a6a00,
-    8px 8px 0 #3a2c00;
+    3px 0 0 #000, -3px 0 0 #000, 0 3px 0 #000, 0 -3px 0 #000,
+    3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000,
+    7px 7px 0 #7a5200,
+    10px 10px 0 rgba(0, 0, 0, 0.35);
+}
+
+
+/* --- 「クリックしてスタート」のウィンドウ --- */
+
+.opening-start__window {
+  position: absolute;
+  bottom: 8vh;
+  left: 50%;
+  transform: translateX(-50%); /* left: 50% だけだと左端が中央に来るので、自分の幅の半分戻す */
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 32px 12px;
+  white-space: nowrap;
 }
 
 /* 「クリックしてスタート」。点滅させて、押せることを知らせる */
 .opening-start__press {
-  margin-top: 40px;
   font-size: clamp(16px, 2.4vw, 22px);
   letter-spacing: 0.1em;
   animation: dqBlink 1.2s steps(1) infinite;
@@ -185,7 +276,27 @@ main {
 
 .opening-start__note {
   font-size: 12px;
-  color: #8f8f8f;
+  color: #b5b5b5;
+}
+
+
+/* --- スマホ（縦長の画面） --- */
+
+@media screen and (max-width: 768px) {
+  .opening-start__logo {
+    top: 12vh;
+  }
+
+  /* 主人公は少し小さくして、右下に寄せる */
+  .opening-hero {
+    right: -4vw;
+    height: min(52vh, 460px);
+  }
+
+  .opening-start__window {
+    bottom: 5vh;
+    padding: 12px 18px 10px;
+  }
 }
 
 
@@ -196,7 +307,7 @@ main {
 
 .opening-save__panel {
   width: min(90vw, 520px); /* 画面の90%、ただし最大520px */
-  padding: 48px 24px 36px;
+  padding: 36px 24px 28px;
   border-top: 4px solid #ffffff;
   border-bottom: 4px solid #ffffff;
 }
@@ -213,7 +324,7 @@ main {
 }
 
 .opening-save__heading {
-  margin: 0 0 28px;
+  margin: 0 0 20px;
   text-align: center;
   font-size: 15px;
   letter-spacing: 0.15em;
@@ -224,7 +335,7 @@ main {
 .opening-menu {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -250,22 +361,6 @@ main {
   font-size: clamp(20px, 3.6vw, 28px);
   letter-spacing: 0.1em;
   line-height: 1.4;
-}
-
-/* メインの選択肢「MY STORY」は大きめに＋下に区切り線 */
-.opening-menu__item.is-main {
-  margin-bottom: 14px;
-  padding-bottom: 18px;
-  border-bottom: 2px dashed #6b6b6b;
-}
-
-.opening-menu__item.is-main .opening-menu__name {
-  font-size: clamp(26px, 5vw, 38px);
-}
-
-.opening-menu__info {
-  font-size: 13px;
-  color: #b5b5b5;
 }
 
 /* ▶ カーソル（普段は透明） */
@@ -319,6 +414,9 @@ main {
 
   .opening-stars,
   .opening-start__press,
+  .opening-scene__clouds,
+  .opening-hero,
+  .opening-start__logo,
   .opening[data-step="save"] .opening-save__panel {
     animation: none;
   }

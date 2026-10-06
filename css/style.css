@@ -233,7 +233,6 @@ main {
   justify-content: center;
   padding: 140px 5vw 80px;
   position: relative;
-  overflow: hidden; /* 画面外からひょっこり出せるように */
 }
 
 .hero-title {
@@ -282,60 +281,6 @@ main {
   margin: 0;
 }
 
-
-/* --- ウォーリーを探せ風「見え隠れする自分」 --- */
-
-.mini-me {
-  position: absolute;
-  /* 出現させたい位置（例：右下や文字のすき間） */
-  bottom: 120px;
-  right: 12vw;
-
-  font-size: 36px; /* 絵文字の場合のサイズ */
-  width: 45px;     /* 画像の場合のサイズ指定 */
-  height: auto;
-
-  user-select: none;
-  cursor: pointer;
-  z-index: 10;
-
-  /* 8秒周期で見え隠れするアニメーション */
-  animation: peekaboo 8s infinite ease-in-out;
-  transform-origin: bottom center;
-}
-
-/* カーソルを合わせた時に見つけると、ちょっと跳ねるアクション */
-.mini-me:hover {
-  animation-play-state: paused;
-  transform: scale(1.4) rotate(10deg) !important;
-  opacity: 1 !important;
-}
-
-/* ひょっこり顔を出してキョロキョロし、また隠れるキーフレーム */
-@keyframes peekaboo {
-  0%, 15% {
-    opacity: 0;
-    transform: translateY(120%) scale(0.6); /* 物陰に隠れている */
-  }
-  25% {
-    opacity: 1;
-    transform: translateY(0) scale(1) rotate(-8deg); /* ひょっこり出現 */
-  }
-  35% {
-    transform: translateY(0) scale(1) rotate(8deg); /* 右を見る */
-  }
-  45% {
-    transform: translateY(0) scale(1) rotate(-4deg); /* 左を見る */
-  }
-  55% {
-    opacity: 1;
-    transform: translateY(0) scale(1); /* 正面を向く */
-  }
-  65%, 100% {
-    opacity: 0;
-    transform: translateY(120%) scale(0.6); /* 再び隠れる */
-  }
-}
 
 
 /* ========================================
@@ -583,34 +528,65 @@ main {
 
 
 /* ========================================
-   BUTTON / LINK（▶ 付きのコマンド風リンク）
+   NEXT PAGE（右下の「つぎの ぼうけんへ ▶ ○○」）
+   全ページの最後に置く、次のページへの道しるべ
 ======================================== */
 
-.text-link {
-  position: relative;
+/* 置き場所：横いっぱいの箱の中で、右端に寄せる */
+.next-page {
+  display: flex;
+  justify-content: flex-end;  /* 中身（リンク）を右端へ */
+  padding: 0 5vw 120px;
+}
+
+/* トップページでは、ヒーロー（最初の画面）の中の右下に置く */
+.hero .next-page {
+  align-self: stretch;        /* 横いっぱいに広げてから、中身を右に寄せる */
+  margin-top: 48px;
+  padding: 0;
+}
+
+/* リンク本体：小さな説明（上）＋ページ名（下）の2段 */
+.next-link {
   display: inline-flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 36px;
-  padding: 4px 0 4px 24px; /* 左に ▶ カーソルのすき間 */
-  font-size: 16px;
+  flex-direction: column;
+  align-items: flex-end;      /* 2段とも右ぞろえ */
+  gap: 4px;
+}
+
+.next-link__label {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: var(--muted-color);
+}
+
+/* ページ名。左に ▶ カーソルを付けて、RPGのコマンドのように見せる */
+.next-link__name {
+  position: relative;
+  padding-left: 28px;         /* ▶ のすき間 */
+  font-size: clamp(22px, 3vw, 32px);
   letter-spacing: 0.1em;
 }
 
-.text-link::before {
+.next-link__name::before {
   content: "▶";
   position: absolute;
   left: 0;
-  font-size: 0.8em;
+  font-size: 0.7em;
+  top: 50%;
+  transform: translateY(-50%);
+  /* いつも点滅させて「ここから進めるよ」と気づいてもらう */
+  animation: dqBlink 1s steps(1) infinite;
 }
 
-.text-link:hover {
+.next-link:hover .next-link__name,
+.next-link:focus-visible .next-link__name {
   color: var(--accent-color);
 }
 
-/* マウスを乗せたらカーソルを点滅させる */
-.text-link:hover::before {
-  animation: dqBlink 0.8s steps(1) infinite;
+.next-link:focus-visible {
+  outline: 2px dashed var(--accent-color);
+  outline-offset: 6px;
 }
 
 
@@ -741,6 +717,8 @@ main {
   .hero-message { padding: 24px 20px 20px; font-size: 14px; }
 
   .section { padding: 110px 20px; }
+  .next-page { padding: 0 20px 80px; }
+  .hero .next-page { padding: 0; }
   .section-header { grid-template-columns: 1fr; gap: 16px; margin-bottom: 50px; }
   .section-title { font-size: 44px; }
 

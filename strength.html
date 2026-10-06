@@ -2,26 +2,27 @@
 <html lang="ja">
 
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>MY GOAL | AKIRA QUEST</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
-  <!-- 共通CSS -->
-  <link rel="stylesheet" href="css/style.css">
+  <title>STRENGTH | AKIRA QUEST</title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css">
+
 </head>
+
 
 <body>
 
-  <!-- =========================
-       ページ遷移アニメーション
-  ========================== -->
   <div class="page-transition"></div>
 
 
-  <!-- =========================
-       共通ヘッダー
-  ========================== -->
   <header class="site-header">
 
     <div class="header-inner">
@@ -60,7 +61,7 @@
           03 HISTORY
         </a>
 
-        <a href="strength.html">
+        <a href="strength.html" aria-current="page">
           04 STRENGTH
         </a>
 
@@ -68,7 +69,7 @@
           05 QUIZ
         </a>
 
-        <a href="future.html" aria-current="page">
+        <a href="future.html">
           06 MY GOAL
         </a>
 
@@ -79,44 +80,36 @@
   </header>
 
 
-
-  <!-- =========================
-       FUTURE
-  ========================== -->
-
   <main>
 
-    <section class="section future-hero">
+    <section class="section">
 
-      <div>
+      <div class="section-header reveal">
 
-        <!-- ページ番号 -->
-
-        <p class="section-number reveal">
-          06 / 06
+        <p class="section-number">
+          04 / 06
         </p>
 
-
-        <!-- 大きなタイトル -->
-
-        <h1 class="future-title reveal">
-          THE<br>
-          FUTURE<br>
-          I WANT.
+        <h1 class="section-title">
+          MY<br>
+          STRENGTH.
         </h1>
 
+      </div>
 
-        <!-- 未来について -->
 
-        <p class="future-text reveal">
+      <div class="profile-text reveal">
 
-          僕が目指しているのは、
-          ○○な未来です。
+        <p>
+
+          新しいことを見つけると、
+          とりあえずやってみたくなるタイプです。
 
           <br><br>
 
-          そのために今、
-          ○○に挑戦しています。
+          失敗することもありますが、
+          「やってみないと分からない」
+          という考え方を大切にしています。
 
         </p>
 
@@ -127,19 +120,14 @@
 
     <!-- つぎのページへの道しるべ（全ページ共通・右下に表示） -->
     <div class="next-page reveal">
-      <a href="index.html" class="next-link">
-        <span class="next-link__label">さいしょの まちへ もどる</span>
-        <span class="next-link__name">HOME</span>
+      <a href="quiz.html" class="next-link">
+        <span class="next-link__label">つぎの ぼうけんへ</span>
+        <span class="next-link__name">QUIZ</span>
       </a>
     </div>
 
   </main>
 
-
-
-  <!-- =========================
-       JavaScript
-  ========================== -->
 
   <script src="js/script.js"></script>
 
