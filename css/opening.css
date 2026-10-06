@@ -1,145 +1,62 @@
 /* ========================================
-   オープニング演出（index.html 専用）
+   タイトル画面（index.html 専用）
 
    【画面の切り替えの仕組み】
-   ① <html> に is-opening が付いている間だけ、オープニングを表示する
-      （付けるかどうかは index.html の <head> の小さなスクリプトが決める）
-   ② オープニングの中の「どの画面を見せるか」は、
-      #opening の data-step 属性の値で切り替える
-        start   … STEP 1「クリックしてスタート」
-        loading … 画面が切り替わる途中（何も見せない＝暗転）
-        save    … STEP 2「ぼうけんのしょ」
-        leaving … 本編へ移る途中
-   ③ 見せる・隠すは opacity（不透明度）を 0 ⇔ 1 に変えるだけ。
-      transition を付けているので、変わるときに自動でフェードする。
+   #opening の data-step 属性の値で状態を切り替える。
+     start   … タイトル画面を表示中
+     leaving … クリックされた後。画面全体が暗くなって（フェードアウト）、
+               PROFILE ページへ移動する
+   見せる・隠すは opacity（不透明度）を 1 ⇔ 0 に変えるだけ。
+   transition を付けているので、変わるときに自動でフェードする。
 ======================================== */
 
 
 /* ----------------------------------------
-   オープニング全体
+   タイトル画面全体
 ---------------------------------------- */
 
-/* 普段（オープニングを見ない場合）は、存在しないのと同じにする */
-.opening {
-  display: none;
+/* このページはスクロールさせない（タイトル画面だけなので） */
+.title-page {
+  overflow: hidden;
 }
 
-/* <html class="is-opening"> のときだけ、画面いっぱいに表示する */
-.is-opening .opening {
-  display: block;
+.opening {
   position: fixed;
   inset: 0;               /* 画面の上下左右いっぱい */
-  z-index: 10000;         /* ヘッダーやページ遷移の幕より手前 */
+  z-index: 10000;
   background: #000000;
   color: #ffffff;
   font-family: var(--font-pixel);
   overflow: hidden;
 
-  /* 本編へ移るときのフェードアウト用。
+  /* クリック後のフェードアウト用。
      steps(8) で8段階に分けて暗くし、昔のゲームの暗転っぽくする */
   transition: opacity 0.8s steps(8);
 }
 
-/* 本編へ移るとき：オープニング全体を透明にする（＝フェードアウト） */
-.is-opening-out .opening {
+/* クリックされた後：画面全体を透明にする → 下の黒い背景が見えて「暗転」になる */
+.opening[data-step="leaving"] {
   opacity: 0;
 }
 
-
-/* ----------------------------------------
-   オープニング中は、本編（ヘッダー・メイン）を隠す
----------------------------------------- */
-
-.is-opening .site-header,
-.is-opening main {
-  opacity: 0;
-  visibility: hidden;     /* 見えないだけでなく、クリックやTabキーでも選べないようにする */
-}
-
-/* is-opening が外れたときに、本編がじわっと出てくる（＝フェードイン）
-   visibility は「0s」ですぐに visible にする。
-   （ここにも時間をかけると、表示した直後はまだ「見えない」扱いのままで、
-     クリックやキーボードのフォーカスが効かない時間ができてしまうため） */
-.site-header,
-main {
-  transition: opacity 0.8s steps(8), visibility 0s;
-}
-
-/* オープニング中は、後ろのページがスクロールしないようにする */
-.is-opening body {
-  overflow: hidden;
-}
-
-
-/* ----------------------------------------
-   各画面（STEP 1 / STEP 2）の共通設定
-   画面を重ねて置いておき、見せたいものだけ opacity: 1 にする
----------------------------------------- */
-
+/* 画面いっぱいの部品を重ねて置くための共通設定 */
 .opening-screen {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;   /* 画面の真ん中に寄せる */
-
-  opacity: 0;
-  visibility: hidden;
-  /* 隠すとき：opacity を0.6秒かけて0にし、
-     visibility はフェードが終わる0.6秒後に hidden にする（0s の長さ＋0.6s の待ち時間） */
-  transition: opacity 0.6s steps(6), visibility 0s linear 0.6s;
-}
-
-/* data-step="start" のときは STEP 1 を表示 */
-.opening[data-step="start"] .opening-start,
-/* data-step="save" のときは STEP 2 を表示 */
-.opening[data-step="save"] .opening-save,
-/* 本編へ移る途中も、STEP 2 は見せたまま（全体ごとフェードアウトする） */
-.opening[data-step="leaving"] .opening-save {
-  opacity: 1;
-  visibility: visible;
-  /* 見せるとき：visibility はすぐに visible にする（すぐクリック・フォーカスできるように）。
-     opacity だけを0.6秒かけて1にする */
-  transition: opacity 0.6s steps(6), visibility 0s;
+  justify-content: center;
 }
 
 
 /* ----------------------------------------
-   背景のまたたく星（飾り）
-   2px の小さな点を1つだけ作り、box-shadow で「同じ点のコピー」を
-   あちこちに置くことで、たくさんの星を1つの要素で描いている
----------------------------------------- */
-
-.opening-stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 3px;
-  height: 3px;
-  background: transparent;
-  box-shadow:
-    8vw 12vh #fff, 22vw 30vh #888, 35vw 8vh #fff, 48vw 22vh #aaa,
-    63vw 10vh #fff, 77vw 26vh #888, 90vw 14vh #fff, 15vw 70vh #aaa,
-    28vw 85vh #fff, 42vw 64vh #888, 58vw 90vh #fff, 70vw 72vh #aaa,
-    84vw 82vh #fff, 94vw 60vh #888, 5vw 45vh #fff, 96vw 40vh #aaa;
-  /* 星をカクカク点滅させる */
-  animation: openingTwinkle 2.4s steps(2) infinite;
-}
-
-@keyframes openingTwinkle {
-  0%   { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-
-/* ----------------------------------------
-   STEP 1：スタート待機画面
----------------------------------------- */
-
-/* 画面全体を覆う大きなボタン。ボタンの見た目（枠や背景）を全部消している。
+   スタートボタン（＝画面全体）
    中の「風景・主人公・ロゴ・ウィンドウ」は position: absolute で重ねて配置する。
-   重なり順（z-index）：風景 0 → 主人公 1 → ロゴ 2 → ウィンドウ 3 */
+   重なり順（z-index）：風景 0 → 主人公 1 → ロゴ 2 → ウィンドウ 3
+---------------------------------------- */
+
+/* 画面全体を覆う大きなボタン。ボタンの見た目（枠や背景）を全部消している */
 .opening-start {
   width: 100%;
   height: 100%;
@@ -274,13 +191,20 @@ main {
   animation: dqBlink 1.2s steps(1) infinite;
 }
 
+/* クリックした瞬間は、速く点滅させて「決定した」感じを出す */
+.opening[data-step="leaving"] .opening-start__press {
+  animation-duration: 0.16s;
+}
+
 .opening-start__note {
   font-size: 12px;
   color: #b5b5b5;
 }
 
 
-/* --- スマホ（縦長の画面） --- */
+/* ----------------------------------------
+   スマホ（縦長の画面）
+---------------------------------------- */
 
 @media screen and (max-width: 768px) {
   .opening-start__logo {
@@ -301,123 +225,18 @@ main {
 
 
 /* ----------------------------------------
-   STEP 2：「ぼうけんのしょ」画面
-   参考画像のように、上下に白い線を引いた中に選択肢を並べる
----------------------------------------- */
-
-.opening-save__panel {
-  width: min(90vw, 520px); /* 画面の90%、ただし最大520px */
-  padding: 36px 24px 28px;
-  border-top: 4px solid #ffffff;
-  border-bottom: 4px solid #ffffff;
-}
-
-/* STEP 2 が表示されたとき、パネルが上下にカクカク広がって出てくる
-   （RPGのウィンドウが開くときの動き） */
-.opening[data-step="save"] .opening-save__panel {
-  animation: openingWindowOpen 0.4s steps(6);
-}
-
-@keyframes openingWindowOpen {
-  from { transform: scaleY(0.05); }
-  to   { transform: scaleY(1); }
-}
-
-.opening-save__heading {
-  margin: 0 0 20px;
-  text-align: center;
-  font-size: 15px;
-  letter-spacing: 0.15em;
-  color: #c9c9c9;
-}
-
-/* 選択肢のリスト（・の記号を消して、縦に並べる） */
-.opening-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* 1つ1つの選択肢 */
-.opening-menu__item {
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 6px 8px 6px 48px; /* 左に ▶ カーソルのすき間 */
-  background: none;
-  border: none;
-  color: #ffffff;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.opening-menu__name {
-  font-size: clamp(20px, 3.6vw, 28px);
-  letter-spacing: 0.1em;
-  line-height: 1.4;
-}
-
-/* ▶ カーソル（普段は透明） */
-.opening-menu__item::before {
-  content: "▶";
-  position: absolute;
-  left: 14px;
-  top: 8px;
-  font-size: 20px;
-  opacity: 0;
-}
-
-/* JSが is-selected を付けた選択肢に、点滅カーソルを出す */
-.opening-menu__item.is-selected::before {
-  opacity: 1;
-  animation: dqBlink 0.8s steps(1) infinite;
-}
-
-.opening-menu__item.is-selected {
-  color: var(--accent-color);
-}
-
-.opening-menu__item:focus-visible {
-  outline: none; /* カーソルと金色の文字で選択中が分かるので、枠は消す */
-}
-
-/* 決定した瞬間は、カーソルを速く点滅させる */
-.opening-menu__item.is-chosen::before {
-  animation-duration: 0.16s;
-}
-
-.opening-save__hint {
-  margin: 28px 0 0;
-  text-align: center;
-  font-size: 12px;
-  color: #8f8f8f;
-}
-
-
-/* ----------------------------------------
    「動きを減らす」設定のユーザーには、アニメーションを止める
 ---------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .is-opening .opening,
-  .opening-screen,
-  .site-header,
-  main {
+  .opening {
     transition: none;
   }
 
-  .opening-stars,
   .opening-start__press,
   .opening-scene__clouds,
   .opening-hero,
-  .opening-start__logo,
-  .opening[data-step="save"] .opening-save__panel {
+  .opening-start__logo {
     animation: none;
   }
 }

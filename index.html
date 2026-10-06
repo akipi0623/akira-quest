@@ -14,39 +14,22 @@
     rel="stylesheet"
     href="css/style.css">
 
-  <!-- オープニング演出用のCSS（トップページだけで使う） -->
+  <!-- タイトル画面用のCSS（このページだけで使う） -->
   <link
     rel="stylesheet"
     href="css/opening.css">
-
-  <!--
-    オープニングを出すかどうかを、ページが表示される「前」に決める小さなスクリプト。
-    <head> の中で先に実行することで、本編が一瞬チラッと見えてしまうのを防いでいる。
-    ・まだオープニングを見ていない → <html> に is-opening を付ける（CSSでオープニングを表示）
-    ・このタブで一度見た         → 何もしない（すぐ本編）
-    sessionStorage はタブを閉じるまで覚えておける小さな保存場所。
-    ブラウザの設定で使えないこともあるので、try で囲んでエラーでも止まらないようにしている。
-  -->
-  <script>
-    try {
-      if (!sessionStorage.getItem("akiraQuestOpeningDone")) {
-        document.documentElement.classList.add("is-opening");
-      }
-    } catch (error) {
-      document.documentElement.classList.add("is-opening");
-    }
-  </script>
 </head>
 
 
-<body>
+<body class="title-page">
 
   <!-- =========================
-       オープニング（ゲームの開始画面）
-       STEP 1：「クリックしてスタート」画面
-       STEP 2：「ぼうけんのしょ」画面
-       どの画面を見せるかは、#opening の data-step の値で切り替える
-       （start → loading → save → leaving）
+       タイトル画面（ゲームのスタート画面）
+       このページは「タイトル画面」だけのページです。
+       クリックすると効果音が鳴り、画面が暗くなって
+       最初のページ（PROFILE）へ進みます。
+       画面の状態は #opening の data-step で切り替えます
+       （start → leaving）
   ========================== -->
 
   <div
@@ -54,15 +37,8 @@
     class="opening"
     data-step="start">
 
-    <!-- 背景のまたたく星（飾り） -->
-    <div
-      class="opening-stars"
-      aria-hidden="true">
-    </div>
-
-
-    <!-- STEP 1：スタート待機画面。
-         画面全体を1つの大きなボタンにして、どこをクリックしても（Enterキーでも）始まるようにする -->
+    <!-- 画面全体を1つの大きなボタンにして、
+         どこをクリックしても（Enterキーでも）始まるようにする -->
     <button
       id="opening-start"
       class="opening-screen opening-start"
@@ -272,227 +248,10 @@
 
     </button>
 
-
-    <!-- STEP 2：「ぼうけんのしょ」画面 -->
-    <section
-      class="opening-screen opening-save"
-      aria-labelledby="opening-save-heading">
-
-      <div class="opening-save__panel">
-
-        <p
-          id="opening-save-heading"
-          class="opening-save__heading">
-          ぼうけんのしょ「MY STORY」<br>
-          どこから はじめますか？
-        </p>
-
-        <!-- 選択肢。ヘッダーのメニュー（PC・スマホ共通）と同じ項目・同じ順番にしている。
-             ↑↓キーでカーソル移動、Enterで決定（JSで操作）
-             ・data-href がない項目（HOME）… オープニングを閉じて、このページの本編を表示
-             ・data-href がある項目        … そのページへ移動 -->
-        <ul
-          id="opening-menu"
-          class="opening-menu">
-
-          <li>
-            <button
-              class="opening-menu__item"
-              type="button">
-              <span class="opening-menu__name">01 HOME</span>
-            </button>
-          </li>
-
-          <li>
-            <button
-              class="opening-menu__item"
-              type="button"
-              data-href="profile.html">
-              <span class="opening-menu__name">02 PROFILE</span>
-            </button>
-          </li>
-
-          <li>
-            <button
-              class="opening-menu__item"
-              type="button"
-              data-href="history.html">
-              <span class="opening-menu__name">03 HISTORY</span>
-            </button>
-          </li>
-
-          <li>
-            <button
-              class="opening-menu__item"
-              type="button"
-              data-href="strength.html">
-              <span class="opening-menu__name">04 STRENGTH</span>
-            </button>
-          </li>
-
-          <li>
-            <button
-              class="opening-menu__item"
-              type="button"
-              data-href="quiz.html">
-              <span class="opening-menu__name">05 QUIZ</span>
-            </button>
-          </li>
-
-          <li>
-            <button
-              class="opening-menu__item"
-              type="button"
-              data-href="future.html">
-              <span class="opening-menu__name">06 MY GOAL</span>
-            </button>
-          </li>
-
-        </ul>
-
-        <p class="opening-save__hint">
-          ↑↓：えらぶ　Enter：けってい
-        </p>
-
-      </div>
-
-    </section>
-
   </div>
 
 
-  <!-- ページ切り替えアニメーション -->
-  <div class="page-transition"></div>
-
-
-  <!-- HEADER -->
-
-  <header class="site-header">
-
-    <div class="header-inner">
-
-      <!-- ロゴ（クリックでトップへ） -->
-      <a href="index.html" class="logo">
-        AKIRA QUEST
-      </a>
-
-
-      <!-- ハンバーガーボタン（スマホのときだけ表示） -->
-      <button
-        class="menu-toggle"
-        type="button"
-        aria-label="メニューを開く"
-        aria-expanded="false"
-        aria-controls="global-nav">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-
-      <!-- メニュー（今いるページには aria-current="page" を付ける） -->
-      <nav class="navigation" id="global-nav">
-
-        <a href="index.html" aria-current="page">
-          01 HOME
-        </a>
-
-        <a href="profile.html">
-          02 PROFILE
-        </a>
-
-        <a href="history.html">
-          03 HISTORY
-        </a>
-
-        <a href="strength.html">
-          04 STRENGTH
-        </a>
-
-        <a href="quiz.html">
-          05 QUIZ
-        </a>
-
-        <a href="future.html">
-          06 MY GOAL
-        </a>
-
-      </nav>
-
-    </div>
-
-  </header>
-
-
-  <!-- MAIN -->
-
-  <main>
-
-
-    <!-- HERO -->
-
-    <section class="hero">
-
-      <h1 class="hero-title reveal">
-
-        <span>THIS</span>
-
-        <span>IS</span>
-
-        <span>MY</span>
-
-        <span>STORY.</span>
-
-      </h1>
-
-
-      <p class="hero-subtitle reveal">
-
-        はじめまして。小山 央（こやま あきら）です。<br>
-
-        これまでの人生、今の価値観、
-        そしてこれから目指している未来。
-
-      </p>
-
-
-      <!-- このサイトがRPG風になっている理由（メッセージウィンドウ風）
-           class="dq-window" を付けるだけで、黒地＋白枠のウィンドウになる（style.css参照） -->
-      <div class="dq-window hero-message reveal">
-
-        <p class="dq-window__label">
-          はじめに
-        </p>
-
-        <p>
-          ＊ 人生は、まるでRPG。<br>
-          さまざまなクエスト（経験）をクリアし、
-          仲間と出会い、少しずつレベルアップしていく。<br><br>
-          そんな これまでの軌跡を「冒険の書」としてまとめました。
-          さあ、ぼうけんを はじめよう！
-        </p>
-
-      </div>
-
-
-      <!-- つぎのページへの道しるべ（全ページ共通・右下に表示） -->
-      <div class="next-page reveal">
-        <a href="profile.html" class="next-link">
-          <span class="next-link__label">つぎの ぼうけんへ</span>
-          <span class="next-link__name">PROFILE</span>
-        </a>
-      </div>
-
-    </section>
-
-
-
-  </main>
-
-
-  <script src="js/script.js"></script>
-
-  <!-- オープニング演出の動き（トップページだけで使う） -->
+  <!-- タイトル画面の動き -->
   <script src="js/opening.js"></script>
 
 </body>

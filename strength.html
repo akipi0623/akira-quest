@@ -27,7 +27,7 @@
 
     <div class="header-inner">
 
-      <!-- ロゴ（クリックでトップへ） -->
+      <!-- ロゴ（クリックでタイトル画面へ） -->
       <a href="index.html" class="logo">
         AKIRA QUEST
       </a>
@@ -49,28 +49,20 @@
       <!-- メニュー（今いるページには aria-current="page" を付ける） -->
       <nav class="navigation" id="global-nav">
 
-        <a href="index.html">
-          01 HOME
-        </a>
-
         <a href="profile.html">
-          02 PROFILE
+          01 PROFILE
         </a>
 
         <a href="history.html">
-          03 HISTORY
+          02 HISTORY
         </a>
 
         <a href="strength.html" aria-current="page">
-          04 STRENGTH
-        </a>
-
-        <a href="quiz.html">
-          05 QUIZ
+          03 STRENGTH
         </a>
 
         <a href="future.html">
-          06 MY GOAL
+          04 MY GOAL
         </a>
 
       </nav>
@@ -87,7 +79,7 @@
       <div class="section-header reveal">
 
         <p class="section-number">
-          04 / 06
+          03 / 04
         </p>
 
         <h1 class="section-title">
@@ -98,31 +90,52 @@
       </div>
 
 
-      <div class="profile-text reveal">
+      <!-- ひとこと（メッセージウィンドウ風） -->
+      <p class="strength-lead reveal">
+        ＊ AKIRA の とくぎを しらべた！
+      </p>
 
-        <p>
 
-          新しいことを見つけると、
-          とりあえずやってみたくなるタイプです。
+      <!-- 3つの強み。1つの強み ＝ 1つのウィンドウ（とくぎ）
+           どれも「見出し（キャッチコピー）」＋「詳細（説明文）」の2つで統一している -->
+      <ol class="strength-list">
 
-          <br><br>
+        <li class="dq-window strength-card reveal">
+          <p class="dq-window__label">とくぎ その1</p>
+          <h2 class="strength-card__title">まず、やってみる行動力</h2>
+          <p class="strength-card__text">
+            新しいことを見つけると、とりあえずやってみたくなるタイプです。
+            失敗することもありますが、「やってみないと分からない」という考え方を大切にしています。
+          </p>
+        </li>
 
-          失敗することもありますが、
-          「やってみないと分からない」
-          という考え方を大切にしています。
+        <li class="dq-window strength-card reveal">
+          <p class="dq-window__label">とくぎ その2</p>
+          <h2 class="strength-card__title">結果で語れる営業力</h2>
+          <p class="strength-card__text">
+            Web広告代理店とWebメディア事業会社で営業を経験。
+            体育会系の環境で鍛えられたメンタルを武器に、年間1億円プレーヤーとして自分と会社の成長のために奮闘しています。
+          </p>
+        </li>
 
-        </p>
+        <li class="dq-window strength-card reveal">
+          <p class="dq-window__label">とくぎ その3</p>
+          <h2 class="strength-card__title">営業 × Webマーケの二刀流</h2>
+          <p class="strength-card__text">
+            営業だけでなく、ディレクション・SEO・広告運用も学んできました。
+            売る力とWebの知識の両方を持っていることが強みです。
+          </p>
+        </li>
 
-      </div>
+      </ol>
 
     </section>
 
-
     <!-- つぎのページへの道しるべ（全ページ共通・右下に表示） -->
     <div class="next-page reveal">
-      <a href="quiz.html" class="next-link">
+      <a href="future.html" class="next-link">
         <span class="next-link__label">つぎの ぼうけんへ</span>
-        <span class="next-link__name">QUIZ</span>
+        <span class="next-link__name">MY GOAL</span>
       </a>
     </div>
 

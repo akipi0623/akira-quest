@@ -297,17 +297,17 @@
 }
 
 /* マウスを乗せる／キーボードで選ぶと、金色の枠になって少し浮く
-   （コマが移動中のときは反応させない） */
-.roadmap-board:not(.is-moving) .roadmap-tile.is-event:hover,
-.roadmap-tile.is-event:focus-visible {
+   （宝箱のマスも石だたみのマスも同じ。コマが移動中のときは反応させない） */
+.roadmap-board:not(.is-moving) .roadmap-tile:hover,
+.roadmap-tile:focus-visible {
   border-color: var(--dq-gold);
   transform: translateY(-4px);
   outline: none;
 }
 
 /* 選んでいるマスの左に、点滅する ▶ カーソルを出す（RPGのコマンド選択風） */
-.roadmap-board:not(.is-moving) .roadmap-tile.is-event:hover::before,
-.roadmap-tile.is-event:focus-visible::before {
+.roadmap-board:not(.is-moving) .roadmap-tile:hover::before,
+.roadmap-tile:focus-visible::before {
   content: "▶";
   position: absolute;
   top: 50%;
@@ -320,17 +320,19 @@
 }
 
 /* コマが移動中は「待ってね」のカーソルに */
-.roadmap-board.is-moving .roadmap-tile.is-event {
+.roadmap-board.is-moving .roadmap-tile {
   cursor: wait;
 }
 
 
-/* --- イベントのないマス：石だたみ（通過するだけ） --- */
+/* --- 宝箱のないマス：石だたみ（止まると、ひとことが出る） --- */
 
 .roadmap-tile.is-blank {
   background: #a59d8c;
   color: #2b251c;
   border: 3px solid #3d362b;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
   /* 内側の左上を明るく、右下を暗くして、石が盛り上がって見えるようにする */
   box-shadow:
     inset 4px 4px 0 rgba(255, 255, 255, 0.3),
@@ -460,6 +462,136 @@
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
+}
+
+
+/* ----------------------------------------
+   ひとことポップアップ（マスのそばに出る小さなウィンドウ）
+
+   【置き場所の仕組み】
+   盤（position: relative）の中に position: absolute で置き、
+   JSが left / top を「止まったマスの下（入りきらなければ上）」に設定する。
+   しっぽ（▲）の位置は、JSが渡す --tail-x（ポップアップ左端からマス中心までの距離）で決める。
+---------------------------------------- */
+
+.roadmap-popup {
+  position: absolute;          /* style.css の .dq-window（relative）を上書きする */
+  z-index: 6;                  /* コマ（5）より手前 */
+  width: min(320px, calc(100% - 24px)); /* 320px、ただし盤が狭いときは盤に合わせる */
+  padding: 26px 18px 12px;
+  font-size: 15px;
+  line-height: 1.8;
+  /* 出てくるとき、上下にカクカク開く（RPGのウィンドウが開く動き） */
+  animation: popupOpen 0.25s steps(5);
+}
+
+/* hidden のときは確実に消す */
+.roadmap-popup[hidden] {
+  display: none;
+}
+
+@keyframes popupOpen {
+  from { transform: scaleY(0.05); }
+  to   { transform: scaleY(1); }
+}
+
+/* しっぽ：黒い正方形を45度回し、2辺にだけ白い線を付けて「▲」に見せる */
+.roadmap-popup::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  /* clamp(最小, 希望, 最大)：しっぽがウィンドウの角からはみ出さないようにする */
+  left: clamp(14px, calc(var(--tail-x, 50%) - 10px), calc(100% - 34px));
+  width: 16px;
+  height: 16px;
+  background: var(--dq-black);
+  border-top: 4px solid var(--dq-white);
+  border-left: 4px solid var(--dq-white);
+  transform: rotate(45deg);
+}
+
+/* ポップアップがマスの「上」に出るときは、しっぽを下側にする */
+.roadmap-popup.is-above::after {
+  top: auto;
+  bottom: -12px;
+  border-top: none;
+  border-left: none;
+  border-right: 4px solid var(--dq-white);
+  border-bottom: 4px solid var(--dq-white);
+}
+
+/* 見出しのラベルは、しっぽより手前に出す */
+.roadmap-popup__label {
+  z-index: 1;
+}
+
+/* 「レベルが あがった！」の一行（金色・小さめ） */
+.roadmap-popup__levelup {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--dq-gold);
+}
+
+/* ひとこと本文 */
+.roadmap-popup__text {
+  margin: 0;
+  min-height: 3.6em;          /* 2行ぶんの高さを確保して、文字送り中にガタガタしないように */
+  white-space: pre-wrap;      /* データの \n をそのまま改行にする */
+  cursor: pointer;
+}
+
+.roadmap-popup__text.is-done::after {
+  content: "▼";
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.7em;
+  animation: dqBlink 1s steps(1) infinite;
+}
+
+/* コマンド（右寄せで横に並べる） */
+.roadmap-popup__commands {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 2px dashed #555555;
+}
+
+.roadmap-popup__command {
+  position: relative;
+  padding: 4px 4px 4px 22px;   /* 左に ▶ カーソルのすき間 */
+  background: none;
+  border: none;
+  color: var(--dq-white);
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* ▶ カーソル（選んでいるコマンドだけ表示して点滅） */
+.roadmap-popup__command::before {
+  content: "▶";
+  position: absolute;
+  left: 2px;
+  opacity: 0;
+}
+
+.roadmap-popup__command:focus-visible {
+  outline: none; /* 枠の代わりに、▶ と金色で「選んでいる」ことを見せる */
+}
+
+/* JSが is-selected を付けたコマンドだけ、金色＋点滅する ▶ にする。
+   （マウスを乗せた・キーボードで選んだコマンドに is-selected が移る。
+     開いた直後は、RPGと同じく1つ目の「くわしく みる」に付いている） */
+.roadmap-popup__command.is-selected {
+  color: var(--dq-gold);
+}
+
+.roadmap-popup__command.is-selected::before {
+  opacity: 1;
+  animation: dqBlink 0.8s steps(1) infinite;
 }
 
 

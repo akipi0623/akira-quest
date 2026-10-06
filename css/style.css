@@ -104,9 +104,7 @@ button {
 ======================================== */
 
 .dq-window,
-.profile-text,
-.quiz-wrapper,
-.future-text {
+.profile-text {
   position: relative; /* 枠の上の見出し（__label）を、このウィンドウ基準で置くため */
   background: var(--window-bg);
   color: var(--text-primary);
@@ -223,67 +221,6 @@ main {
 
 
 /* ========================================
-   HERO（トップページの最初の画面）
-======================================== */
-
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 140px 5vw 80px;
-  position: relative;
-}
-
-.hero-title {
-  margin: 0;
-  font-size: clamp(48px, 8vw, 120px);
-  font-weight: normal; /* ドット文字は太字にすると潰れるので、普通の太さにする */
-  line-height: 1.1;
-  letter-spacing: 0.02em;
-}
-
-/* 単語ごとに横に並べ、入りきらなければ自然に折り返す
-   （1単語1行にすると縦に長くなり、下のメッセージウィンドウが画面に入らないため） */
-.hero-title span {
-  display: inline-block;
-  margin-right: 0.35em;
-  transition: transform 0.3s steps(3), color 0.3s steps(3);
-}
-
-/* タイトルにマウスを乗せると、金色になって右に少しずれる */
-.hero-title:hover span {
-  transform: translateX(10px);
-  color: var(--accent-color);
-}
-
-.hero-subtitle {
-  max-width: 560px;
-  margin-top: 40px;
-  font-size: 16px;
-  color: var(--muted-color);
-}
-
-/* サイトのコンセプトを書いたメッセージウィンドウ */
-.hero-message {
-  max-width: 640px;
-  margin-top: 36px;
-  padding: 28px 30px 24px;
-  font-size: 16px;
-  line-height: 2;
-}
-
-.hero-message p {
-  margin: 0;
-}
-
-.hero-message .dq-window__label {
-  margin: 0;
-}
-
-
-
-/* ========================================
    SECTION（各ページの見出しと中身）
 ======================================== */
 
@@ -372,158 +309,292 @@ main {
 
 
 /* ========================================
-   QUIZ（ウィンドウ＋コマンド選択風）
+   STRENGTH（3つの「とくぎ」ウィンドウ）
 ======================================== */
 
-.quiz-wrapper {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 48px 44px;
-}
-
-.quiz-progress {
-  margin-bottom: 16px;
-  font-size: 14px;
-  letter-spacing: 0.15em;
-  color: var(--accent-color);
-}
-
-.quiz-question {
-  margin-bottom: 40px;
-  font-size: clamp(26px, 4vw, 48px);
-  font-weight: normal;
-  line-height: 1.3;
-}
-
-.quiz-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-/* 選択肢のボタン（小さなウィンドウ） */
-.quiz-option {
-  position: relative;
-  min-height: 80px;
-  padding: 20px 24px 20px 44px; /* 左に ▶ カーソルのすき間 */
-  background: var(--window-bg);
-  color: var(--text-primary);
-  border: 3px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 17px;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-/* ▶ カーソル（普段は隠す） */
-.quiz-option::before {
-  content: "▶";
-  position: absolute;
-  left: 16px;
-  opacity: 0;
-}
-
-/* 答える前は、マウスを乗せると金色＋点滅カーソル */
-.quiz-option:hover:not(:disabled),
-.quiz-option:focus-visible {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-  outline: none;
-}
-
-.quiz-option:hover:not(:disabled)::before,
-.quiz-option:focus-visible::before {
-  opacity: 1;
-  animation: dqBlink 0.8s steps(1) infinite;
-}
-
-/* 答えた後は押せないようにして、選ばれなかった方を暗くする */
-.quiz-option:disabled {
-  cursor: default;
-  opacity: 0.4;
-}
-
-/* 正解の選択肢：金色に反転 */
-.quiz-option.is-correct {
-  opacity: 1;
-  background: var(--accent-color);
-  border-color: var(--accent-color);
-  color: #000000;
-}
-
-/* 選んだけれど不正解だった選択肢 */
-.quiz-option.is-wrong {
-  opacity: 1;
-  text-decoration: line-through;
-}
-
-.quiz-result {
-  min-height: 80px;
-  margin-top: 36px;
-  padding-top: 28px;
-  border-top: 3px dashed var(--border-color);
+/* ひとこと（RPGのメッセージ風に、金色で表示） */
+.strength-lead {
+  margin: 0 0 48px;
   font-size: 18px;
   color: var(--accent-color);
 }
 
-/* 「次の問題へ」「もう一度」ボタン（▶ 付きのコマンド） */
-.quiz-next {
-  position: relative;
-  padding: 4px 4px 4px 26px;
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 16px;
-  letter-spacing: 0.08em;
-  cursor: pointer;
+/* 3つの強みを横に3つ並べる（スマホでは縦1列。RESPONSIVE を参照）
+   repeat(3, 1fr) … 同じ幅の列を3つ作る */
+.strength-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px 28px;      /* 縦のすき間 40px、横のすき間 28px */
+  margin: 0;
+  padding: 0;
+  list-style: none;    /* 1. 2. 3. の番号を消す（番号はラベルで見せる） */
 }
 
-.quiz-next::before {
+/* 1つの強み（ウィンドウ）。中身を縦に並べる */
+.strength-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 36px 28px 28px;
+  transition: border-color 0.2s steps(2), transform 0.2s steps(2);
+}
+
+/* マウスを乗せると、枠が金色になって少し浮く */
+.strength-card:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-4px);
+}
+
+/* 見出し（キャッチコピー）。左に ▶ を付けて「選んでいる」感じを出す */
+.strength-card__title {
+  position: relative;
+  margin: 0;
+  padding-left: 26px;
+  font-size: clamp(20px, 2vw, 24px);
+  font-weight: normal;
+  line-height: 1.5;
+  color: var(--accent-color);
+}
+
+.strength-card__title::before {
   content: "▶";
   position: absolute;
-  left: 4px;
+  left: 0;
+  font-size: 0.7em;
+  top: 0.45em;
+}
+
+/* マウスを乗せている強みだけ、▶ を点滅させる */
+.strength-card:hover .strength-card__title::before {
   animation: dqBlink 0.8s steps(1) infinite;
 }
 
-.quiz-next:hover,
-.quiz-next:focus-visible {
-  color: var(--accent-color);
-  outline: none;
-}
-
-/* hidden 属性が付いているときは確実に隠す */
-.quiz-next[hidden] {
-  display: none;
+/* 詳細（説明文）。見出しとの間に点線を引いて区切る */
+.strength-card__text {
+  margin: 0;
+  padding-top: 16px;
+  border-top: 2px dashed #555555;
+  font-size: 15px;
+  line-height: 1.9;
 }
 
 
 /* ========================================
-   FUTURE
+   MY GOAL（RPGのステータス画面風）
 ======================================== */
 
-.future-hero {
-  min-height: 80vh;
+/* タイトルを金色に光らせる（text-shadow をぼかして重ねると光って見える） */
+.goal-title {
+  color: var(--accent-color);
+  text-shadow:
+    0 0 12px rgba(255, 210, 63, 0.55),
+    4px 4px 0 #5a3f00;
+}
+
+/* 主人公とウィンドウを並べる「舞台」。
+   左に主人公（2）、右にウィンドウ（3）の割合で横に並べる */
+.goal-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 48px;
+  align-items: center;
+  padding: 48px 40px;
+  border: 4px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;   /* 回転する光の筋を、枠の外にはみ出させない */
+
+  /* 夜空：上が濃い紺、下にいくほど少し明るく。
+     その上に小さな点（星）を2種類の間隔で敷きつめる */
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.7) 1px, transparent 1.5px) 0 0 / 46px 46px,
+    radial-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1.5px) 23px 17px / 31px 31px,
+    linear-gradient(#050816, #101a3a 70%, #1c2a52);
+}
+
+/* ブラウン管テレビのような細い横じま（走査線）を上に重ねて、レトロ感を出す。
+   pointer-events: none なので、クリックの邪魔はしない */
+.goal-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: repeating-linear-gradient(
+    rgba(255, 255, 255, 0.035) 0 1px,
+    transparent 1px 4px
+  );
+  pointer-events: none;
+}
+
+
+/* --- 主人公 --- */
+
+.goal-hero {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
 }
 
-.future-title {
-  margin: 0;
-  font-size: clamp(56px, 10vw, 150px);
-  font-weight: normal;
-  line-height: 1.05;
-  letter-spacing: 0.02em;
+/* 主人公の後ろで、金色の光の筋がゆっくり回る。
+   repeating-conic-gradient … 中心から放射状に色をくり返す（光の筋になる） */
+.goal-hero::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 520px;
+  height: 520px;
+  margin: -300px 0 0 -260px;   /* 自分の大きさの半分だけ戻して、中心を合わせる */
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    rgba(255, 210, 63, 0.16) 0deg 8deg,
+    transparent 8deg 24deg
+  );
+  /* 外側ほど消えるように、円形のマスク（切り抜き）をかける */
+  -webkit-mask-image: radial-gradient(circle, #000 25%, transparent 70%);
+  mask-image: radial-gradient(circle, #000 25%, transparent 70%);
+  animation: goalRays 40s linear infinite;
 }
 
-/* 未来の文章はウィンドウの中に入れる */
-.future-text {
-  max-width: 640px;
-  margin-top: 60px;
-  padding: 28px 30px;
+@keyframes goalRays {
+  to { transform: rotate(360deg); }
+}
+
+.goal-hero__image {
+  position: relative;   /* 光の筋（::before）より手前に出す */
+  z-index: 1;
+  width: auto;
+  max-width: 100%;
+  height: min(56vh, 460px);
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.5));
+  animation: goalBreath 3.2s ease-in-out infinite;
+}
+
+/* 息をしているように、ほんの少し上下させる */
+@keyframes goalBreath {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* 足元の名札（小さなウィンドウ） */
+.goal-hero__name {
+  position: relative;
+  z-index: 2;
+  margin: -8px 0 0;
+  padding: 4px 22px;
   font-size: 18px;
+  letter-spacing: 0.2em;
+  color: var(--accent-color);
+}
+
+
+/* --- 右側のウィンドウ群 --- */
+
+.goal-panels {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;   /* 枠の上の見出しがぶつからないよう、広めにすき間をとる */
+}
+
+.goal-panels .dq-window {
+  padding: 28px 26px 22px;
+}
+
+/* ウィンドウが表示されるとき、上下にカクカク開く（RPGのウィンドウが開く動き）。
+   .reveal に .active が付いた瞬間（スクロールで画面に入ったとき）に再生される */
+.goal-panels .reveal.active {
+  animation: goalWindowOpen 0.35s steps(5);
+}
+
+@keyframes goalWindowOpen {
+  from { transform: scaleY(0.05); }
+  to   { transform: scaleY(1); }
+}
+
+/* ステータス：項目名と中身を左右に並べ、行ごとに点線で区切る */
+.goal-status__list {
+  margin: 0;
+}
+
+.goal-status__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px dashed #444444;
+}
+
+.goal-status__row:last-child {
+  border-bottom: none;
+}
+
+.goal-status__row dt {
+  color: var(--muted-color);
+}
+
+.goal-status__row dd {
+  margin: 0;
+  text-align: right;
+}
+
+/* メインクエスト */
+.goal-quest__title {
+  position: relative;
+  margin: 0 0 14px;
+  padding-left: 30px;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.6;
+  color: var(--accent-color);
+}
+
+/* 先頭の ★ をきらきら点滅させる */
+.goal-quest__title::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  animation: dqBlink 1.4s steps(1) infinite;
+}
+
+.goal-quest__text {
+  margin: 0 0 18px;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+/* 「たっせい めやす」などの小さなタグ */
+.goal-quest__meta {
+  display: flex;
+  flex-wrap: wrap;   /* 入りきらなければ次の行へ */
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.goal-quest__meta li {
+  padding: 2px 12px;
+  border: 2px solid var(--accent-color);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--accent-color);
+}
+
+/* サブクエスト：先頭に □（まだ達成していないチェック箱）を付ける */
+.goal-sub__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.goal-sub__list li::before {
+  content: "□ ";
+  color: var(--muted-color);
 }
 
 
@@ -537,13 +608,6 @@ main {
   display: flex;
   justify-content: flex-end;  /* 中身（リンク）を右端へ */
   padding: 0 5vw 120px;
-}
-
-/* トップページでは、ヒーロー（最初の画面）の中の右下に置く */
-.hero .next-page {
-  align-self: stretch;        /* 横いっぱいに広げてから、中身を右に寄せる */
-  margin-top: 48px;
-  padding: 0;
 }
 
 /* リンク本体：小さな説明（上）＋ページ名（下）の2段 */
@@ -638,8 +702,9 @@ main {
   .site-header { padding: 18px 30px; }
   .navigation { gap: 18px; }
   .section { padding: 120px 4vw; }
-  .hero { padding-left: 4vw; padding-right: 4vw; }
   .profile-grid { gap: 5vw; }
+  .strength-list { grid-template-columns: 1fr; max-width: 640px; }
+  .goal-stage { padding: 40px 28px; gap: 32px; }
 }
 
 @media screen and (max-width: 768px) {
@@ -707,18 +772,8 @@ main {
   /* メニューを開いている間は背景のスクロールを止める */
   body.menu-open { overflow: hidden; }
 
-  .hero {
-    min-height: 100svh;
-    padding: 110px 20px 60px;
-  }
-
-  .hero-title { font-size: clamp(48px, 15vw, 90px); }
-  .hero-subtitle { margin-top: 32px; font-size: 14px; }
-  .hero-message { padding: 24px 20px 20px; font-size: 14px; }
-
   .section { padding: 110px 20px; }
   .next-page { padding: 0 20px 80px; }
-  .hero .next-page { padding: 0; }
   .section-header { grid-template-columns: 1fr; gap: 16px; margin-bottom: 50px; }
   .section-title { font-size: 44px; }
 
@@ -726,10 +781,25 @@ main {
   .profile-text { padding: 28px 20px 22px; }
   .profile-name { font-size: 32px; }
 
-  .quiz-wrapper { padding: 32px 18px; }
-  .quiz-options { grid-template-columns: 1fr; }
-  .quiz-question { font-size: 28px; }
+  /* STRENGTH：3つの強みを縦1列に */
+  .strength-list { grid-template-columns: 1fr; gap: 36px; }
+  .strength-card { padding: 32px 20px 22px; }
 
-  .future-title { font-size: 56px; }
-  .future-text { padding: 24px 20px; font-size: 16px; }
+  /* MY GOAL：主人公の下にウィンドウを並べる（縦1列） */
+  .goal-stage { grid-template-columns: 1fr; gap: 32px; padding: 36px 16px 24px; }
+  .goal-hero__image { height: min(42vh, 340px); }
+  .goal-hero::before { width: 380px; height: 380px; margin: -220px 0 0 -190px; }
+  .goal-panels .dq-window { padding: 26px 18px 18px; }
+  .goal-status__row { font-size: 14px; }
+}
+
+
+/* 「動きを減らす」設定のユーザーには、MY GOAL の動きを止める */
+@media (prefers-reduced-motion: reduce) {
+  .goal-hero::before,
+  .goal-hero__image,
+  .goal-quest__title::before,
+  .goal-panels .reveal.active {
+    animation: none;
+  }
 }

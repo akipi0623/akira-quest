@@ -26,7 +26,7 @@
 
     <div class="header-inner">
 
-      <!-- ロゴ（クリックでトップへ） -->
+      <!-- ロゴ（クリックでタイトル画面へ） -->
       <a href="index.html" class="logo">
         AKIRA QUEST
       </a>
@@ -48,28 +48,20 @@
       <!-- メニュー（今いるページには aria-current="page" を付ける） -->
       <nav class="navigation" id="global-nav">
 
-        <a href="index.html">
-          01 HOME
-        </a>
-
         <a href="profile.html">
-          02 PROFILE
+          01 PROFILE
         </a>
 
         <a href="history.html">
-          03 HISTORY
+          02 HISTORY
         </a>
 
         <a href="strength.html">
-          04 STRENGTH
-        </a>
-
-        <a href="quiz.html">
-          05 QUIZ
+          03 STRENGTH
         </a>
 
         <a href="future.html" aria-current="page">
-          06 MY GOAL
+          04 MY GOAL
         </a>
 
       </nav>
@@ -86,50 +78,111 @@
 
   <main>
 
-    <section class="section future-hero">
+    <section class="section goal">
 
-      <div>
+      <div class="section-header reveal">
 
-        <!-- ページ番号 -->
-
-        <p class="section-number reveal">
-          06 / 06
+        <p class="section-number">
+          04 / 04
         </p>
 
-
-        <!-- 大きなタイトル -->
-
-        <h1 class="future-title reveal">
-          THE<br>
-          FUTURE<br>
-          I WANT.
+        <h1 class="section-title goal-title">
+          MY<br>
+          GOAL.
         </h1>
 
+      </div>
 
-        <!-- 未来について -->
 
-        <p class="future-text reveal">
+      <!-- ステータス画面。左に主人公、右にウィンドウを並べる -->
+      <div class="goal-stage">
 
-          僕が目指しているのは、
-          ○○な未来です。
+        <!-- 主人公（後ろで光の筋がゆっくり回る） -->
+        <div class="goal-hero reveal">
+          <img
+            class="goal-hero__image"
+            src="images/akira-hero.webp"
+            alt="勇者の姿のAKIRA">
+          <p class="dq-window goal-hero__name">AKIRA</p>
+        </div>
 
-          <br><br>
 
-          そのために今、
-          ○○に挑戦しています。
+        <div class="goal-panels">
 
-        </p>
+          <!-- ステータスウィンドウ -->
+          <div class="dq-window goal-status reveal">
+
+            <p class="dq-window__label">ステータス</p>
+
+            <!-- dl（説明リスト）… 「項目名（dt）」と「中身（dd）」のペアを並べるためのタグ -->
+            <dl class="goal-status__list">
+              <div class="goal-status__row">
+                <dt>なまえ</dt>
+                <dd>小山 央</dd>
+              </div>
+              <div class="goal-status__row">
+                <dt>しょくぎょう</dt>
+                <dd>えいぎょう</dd>
+              </div>
+              <div class="goal-status__row">
+                <dt>しょうごう</dt>
+                <dd>年間1億円プレーヤー</dd>
+              </div>
+              <div class="goal-status__row">
+                <dt>なかま</dt>
+                <dd>あいけん</dd>
+              </div>
+            </dl>
+
+          </div>
+
+
+          <!-- メインクエスト（いちばん大きな目標） -->
+          <div class="dq-window goal-quest reveal">
+
+            <p class="dq-window__label">メインクエスト</p>
+
+            <p class="goal-quest__title">
+              60さいで げんえきを いんたいし、<br>
+              キャンピングカーで ぜんこくを めぐる
+            </p>
+
+            <p class="goal-quest__text">
+              現役を引退したら、キャンピングカーを購入し、
+              愛犬と共に全国津々浦々をのんびり巡るのが目標です。
+            </p>
+
+            <ul class="goal-quest__meta">
+              <li>たっせい めやす：60さい</li>
+              <li>じょうたい：ぼうけん ちゅう</li>
+            </ul>
+
+          </div>
+
+
+          <!-- サブクエスト（いま取り組んでいること） -->
+          <div class="dq-window goal-sub reveal">
+
+            <p class="dq-window__label">サブクエスト</p>
+
+            <ul class="goal-sub__list">
+              <li>○○な未来を めざす</li>
+              <li>いまは ○○に ちょうせん ちゅう</li>
+            </ul>
+
+          </div>
+
+        </div>
 
       </div>
 
     </section>
 
-
     <!-- つぎのページへの道しるべ（全ページ共通・右下に表示） -->
     <div class="next-page reveal">
       <a href="index.html" class="next-link">
-        <span class="next-link__label">さいしょの まちへ もどる</span>
-        <span class="next-link__name">HOME</span>
+        <span class="next-link__label">タイトルへ もどる</span>
+        <span class="next-link__name">TITLE</span>
       </a>
     </div>
 

@@ -27,7 +27,7 @@
 
     <div class="header-inner">
 
-      <!-- ロゴ（クリックでトップへ） -->
+      <!-- ロゴ（クリックでタイトル画面へ） -->
       <a href="index.html" class="logo">
         AKIRA QUEST
       </a>
@@ -49,28 +49,20 @@
       <!-- メニュー（今いるページには aria-current="page" を付ける） -->
       <nav class="navigation" id="global-nav">
 
-        <a href="index.html">
-          01 HOME
-        </a>
-
         <a href="profile.html">
-          02 PROFILE
+          01 PROFILE
         </a>
 
         <a href="history.html" aria-current="page">
-          03 HISTORY
+          02 HISTORY
         </a>
 
         <a href="strength.html">
-          04 STRENGTH
-        </a>
-
-        <a href="quiz.html">
-          05 QUIZ
+          03 STRENGTH
         </a>
 
         <a href="future.html">
-          06 MY GOAL
+          04 MY GOAL
         </a>
 
       </nav>
@@ -92,7 +84,7 @@
       <div class="section-header reveal">
 
         <p class="section-number">
-          03 / 06
+          02 / 04
         </p>
 
         <h1 class="section-title">
@@ -187,6 +179,49 @@
               </svg>
 
               <!-- ここにJSがマス（ボタン）を追加します -->
+
+
+              <!-- ひとことポップアップ（マスに止まると、そのマスのそばに出る）
+                   位置はJSがマスに合わせて決める。最初は hidden で隠しておく -->
+              <div
+                id="roadmap-popup"
+                class="dq-window roadmap-popup"
+                role="group"
+                aria-labelledby="roadmap-popup-label"
+                hidden>
+
+                <!-- 枠の上の見出し（年齢） -->
+                <p
+                  id="roadmap-popup-label"
+                  class="dq-window__label roadmap-popup__label">
+                </p>
+
+                <!-- 「レベルが あがった！」などの一行 -->
+                <p class="roadmap-popup__levelup"></p>
+
+                <!-- ひとこと（1文字ずつ表示。クリックでスキップ） -->
+                <p
+                  class="roadmap-popup__text"
+                  aria-live="polite">
+                </p>
+
+                <!-- コマンド（▶ で選ぶ） -->
+                <div class="roadmap-popup__commands">
+                  <button
+                    class="roadmap-popup__command"
+                    type="button"
+                    data-action="detail">
+                    くわしく みる
+                  </button>
+                  <button
+                    class="roadmap-popup__command"
+                    type="button"
+                    data-action="close">
+                    とじる
+                  </button>
+                </div>
+
+              </div>
 
               <!-- 主人公のコマ。読み込んだ写真をJSがドット絵に変換します -->
               <div
