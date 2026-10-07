@@ -441,6 +441,16 @@ main {
   transform: translateY(-4px);
 }
 
+/* 強みの画像。横長（16:9）の枠にそろえ、object-fit: cover で
+   比率を保ったまま枠いっぱいに表示する（引き伸ばしはしない） */
+.strength-card__image {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 3px solid var(--border-color);
+  border-radius: 6px;
+  background: #222222;   /* 読み込み中も枠の形が分かるように */
+}
+
 /* 見出し（キャッチコピー）。左に ▶ を付けて「選んでいる」感じを出す */
 .strength-card__title {
   position: relative;
