@@ -300,8 +300,8 @@
 }
 
 /* マウスを乗せる／キーボードで選ぶと、金色の枠になって少し浮く
-   （宝箱のマスも石だたみのマスも同じ。コマが移動中のときは反応させない） */
-.roadmap-board:not(.is-moving) .roadmap-tile:hover,
+   （止まれるマスだけ。石だたみのマスと、コマが移動中のときは反応させない） */
+.roadmap-board:not(.is-moving) .roadmap-tile:not(.is-blank):hover,
 .roadmap-tile:focus-visible {
   border-color: var(--dq-gold);
   transform: translateY(-4px);
@@ -309,7 +309,7 @@
 }
 
 /* 選んでいるマスの左に、点滅する ▶ カーソルを出す（RPGのコマンド選択風） */
-.roadmap-board:not(.is-moving) .roadmap-tile:hover::before,
+.roadmap-board:not(.is-moving) .roadmap-tile:not(.is-blank):hover::before,
 .roadmap-tile:focus-visible::before {
   content: "▶";
   position: absolute;
@@ -328,14 +328,13 @@
 }
 
 
-/* --- 宝箱のないマス：石だたみ（止まると、ひとことが出る） --- */
+/* --- 宝箱のないマス：石だたみ（コマは通り過ぎるだけで、止まれない。年齢も出さない） --- */
 
 .roadmap-tile.is-blank {
   background: #a59d8c;
   color: #2b251c;
   border: 3px solid #3d362b;
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  cursor: default;
   /* 内側の左上を明るく、右下を暗くして、石が盛り上がって見えるようにする */
   box-shadow:
     inset 4px 4px 0 rgba(255, 255, 255, 0.3),
@@ -531,7 +530,7 @@
 ---------------------------------------- */
 
 .roadmap-message {
-  margin-top: 24px;
+  margin-bottom: 24px; /* 下のすごろく盤との間をあける（上は「つよさ」の margin-bottom） */
   padding: 18px 24px;
   min-height: 100px;
   cursor: pointer;
@@ -784,7 +783,7 @@ body.modal-open {
   .roadmap-tile__icon { width: 46%; }
 
   .roadmap-message {
-    margin-top: 18px;
+    margin-bottom: 18px;
     padding: 14px 16px;
   }
 

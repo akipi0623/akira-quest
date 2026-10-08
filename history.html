@@ -153,6 +153,28 @@
           </div>
 
 
+          <!-- メッセージウィンドウ（「つよさ」とすごろく盤の間。クリックすると文字送りをスキップ） -->
+          <div
+            id="roadmap-message"
+            class="dq-window roadmap-message">
+
+            <!-- 1文字ずつ表示される文章（見た目用） -->
+            <p
+              id="roadmap-message-text"
+              class="roadmap-message__text"
+              aria-hidden="true">
+            </p>
+
+            <!-- 画面読み上げソフト用に、同じ文章を一度にまとめて伝える場所（画面には出ない） -->
+            <p
+              id="roadmap-message-live"
+              class="roadmap-sr-only"
+              aria-live="polite">
+            </p>
+
+          </div>
+
+
           <!-- フィールド（空・草原・海） -->
           <div class="roadmap-field">
 
@@ -201,28 +223,6 @@
               class="roadmap-sea"
               aria-hidden="true">
             </div>
-
-          </div>
-
-
-          <!-- メッセージウィンドウ（クリックすると文字送りをスキップ） -->
-          <div
-            id="roadmap-message"
-            class="dq-window roadmap-message">
-
-            <!-- 1文字ずつ表示される文章（見た目用） -->
-            <p
-              id="roadmap-message-text"
-              class="roadmap-message__text"
-              aria-hidden="true">
-            </p>
-
-            <!-- 画面読み上げソフト用に、同じ文章を一度にまとめて伝える場所（画面には出ない） -->
-            <p
-              id="roadmap-message-live"
-              class="roadmap-sr-only"
-              aria-live="polite">
-            </p>
 
           </div>
 

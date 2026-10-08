@@ -31,6 +31,7 @@ const ROADMAP_HERO_NAME = "AKIRA";
 //   balloon  … バルーンに常に出す、短い説明（空ならバルーンを出さない）
 //   text     … クリックしたときのウィンドウに出す、詳しいエピソード
 //   hasEvent … true なら宝箱のマス、false なら石だたみのマス
+//              （石だたみのマスは年齢を出さず、コマは通り過ぎるだけで止まれない）
 //   ※ text が空のマスは、RPGらしい決まり文句が出ます（getRoadmapDetail を参照）。
 //     エピソードを書き足せば、そのまま表示されます。
 // image は history.html から見た場所（相対パス）で書きます。
@@ -437,10 +438,14 @@ function createRoadmapTiles() {
 
   lifeRoadmapData.forEach((item, index) => {
 
-    // どのマスにも止まれるように、すべてのマスをクリックできる <button> にする
-    const tile = document.createElement("button");
-    tile.type = "button";
+    // 止まれるのは宝箱（イベント）のマスだけ。
+    // 宝箱のマスはクリックできる <button>、石だたみのマスはコマが通り過ぎるだけの <div> にする
+    const tile = document.createElement(item.hasEvent ? "button" : "div");
     tile.className = "roadmap-tile";
+
+    if (item.hasEvent) {
+      tile.type = "button";
+    }
 
 
     // マスに描くドット絵を決める（START=家、GOAL=城、イベント=宝箱）
@@ -461,8 +466,11 @@ function createRoadmapTiles() {
         "</span>";
     }
 
-    tile.innerHTML +=
-      '<span class="roadmap-tile__age">' + item.age + "<small>さい</small></span>";
+    // 年齢は止まれるマスにだけ出す（石だたみのマスは空欄）
+    if (item.hasEvent) {
+      tile.innerHTML +=
+        '<span class="roadmap-tile__age">' + item.age + "<small>さい</small></span>";
+    }
 
 
     // 常時表示のバルーン（吹き出し）。balloon の文章があるマスだけに付ける。
@@ -478,16 +486,25 @@ function createRoadmapTiles() {
     // 宝箱のあるマスと、石だたみのマスで見た目（class）を分ける
     tile.classList.add(item.hasEvent ? "is-event" : "is-blank");
 
-    // 画面読み上げソフト用の説明
-    tile.setAttribute(
-      "aria-label",
-      item.title + (item.balloon ? "「" + item.balloon + "」" : "") + " くわしく見る"
-    );
+    if (item.hasEvent) {
 
-    // クリックされたら、このマスの番号を渡して処理を始める
-    tile.addEventListener("click", () => {
-      handleRoadmapTileClick(index);
-    });
+      // 画面読み上げソフト用の説明
+      tile.setAttribute(
+        "aria-label",
+        item.title + (item.balloon ? "「" + item.balloon + "」" : "") + " くわしく見る"
+      );
+
+      // クリックされたら、このマスの番号を渡して処理を始める
+      tile.addEventListener("click", () => {
+        handleRoadmapTileClick(index);
+      });
+
+    } else {
+
+      // 止まれない飾りのマスなので、読み上げソフトには伝えない
+      tile.setAttribute("aria-hidden", "true");
+
+    }
 
 
     // START と GOAL のラベル
@@ -919,7 +936,10 @@ function openRoadmapModal(index, levelUpText) {
   document.body.classList.add("modal-open");
 
   // 開いてから文字送りを始める（開く前だと、高さを正しく測れないため）
-  roadmapModalWriter.type("＊「" + getRoadmapDetail(item) + "」");
+  // 文末に、次のマスを選んでもらう一言を付ける（\n は改行）
+  roadmapModalWriter.type(
+    "＊「" + getRoadmapDetail(item) + "」\nつぎはどこへいきますか？"
+  );
 
 }
 
