@@ -834,6 +834,92 @@ body.modal-open {
 
 
 /* ========================================
+   REACTION（ページ下のコマンドウィンドウ。全ページ共通）
+   見た目は .dq-window をそのまま使い、中にコマンドとメッセージを並べる。
+   コマンドの「▶」は DQ DIALOG の「▶ とじる」と同じ作り。
+======================================== */
+
+.reaction {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 5vw 100px;
+}
+
+.reaction__window {
+  padding: 30px 28px 20px;
+}
+
+.reaction__commands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reaction__command {
+  position: relative;
+  min-height: 44px;          /* スマホでもタップしやすい大きさ */
+  padding: 4px 4px 4px 26px; /* 左に ▶ カーソルのスペース */
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.reaction__command::before {
+  content: "▶";
+  position: absolute;
+  left: 4px;
+}
+
+/* 選んでいるコマンドは金色にして、カーソルを点滅させる */
+.reaction__command:hover,
+.reaction__command:focus-visible {
+  color: var(--accent-color);
+  outline: none;
+}
+
+.reaction__command:hover::before,
+.reaction__command:focus-visible::before {
+  animation: dqBlink 0.8s steps(1) infinite;
+}
+
+/* おうえん済みのコマンドは灰色にする */
+.reaction__command.is-used {
+  color: var(--muted-color);
+  cursor: default;
+}
+
+.reaction__command.is-used::before {
+  animation: none;
+}
+
+/* メッセージ欄（白い線で区切った下の段）。何もないときは隠しておく */
+.reaction__message {
+  display: none;
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 2px solid var(--border-color);
+  font-size: 16px;
+  line-height: 1.9;
+  white-space: pre-line;   /* \n を改行として表示する */
+  overflow-wrap: anywhere; /* 長いURLでも枠からはみ出さない */
+}
+
+/* 表示するとき：ウィンドウが開くのと同じ、カクカク広がる動き */
+.reaction__message.is-shown {
+  display: block;
+  transform-origin: top;
+  animation: dqDialogOpen 0.25s steps(5);
+}
+
+
+/* ========================================
    SCROLL ANIMATION（スクロールで表示）
 ======================================== */
 
@@ -975,6 +1061,13 @@ body.modal-open {
   .goal-hero__image { height: min(42vh, 340px); }
   .goal-hero::before { width: 380px; height: 380px; margin: -220px 0 0 -190px; }
   .goal-panels .dq-window { padding: 26px 18px 18px; }
+
+  /* コマンドウィンドウ：コマンドを縦1列に */
+  .reaction { padding: 0 20px 80px; }
+  .reaction__window { padding: 26px 18px 16px; }
+  .reaction__commands { flex-direction: column; gap: 4px; }
+  .reaction__command { font-size: 17px; text-align: left; }
+  .reaction__message { font-size: 15px; }
 }
 
 
@@ -984,6 +1077,9 @@ body.modal-open {
   .dq-dialog[open] .dq-dialog__title,
   .dq-dialog.is-closing .dq-dialog__inner,
   .dq-dialog.is-closing .dq-dialog__title,
+  .reaction__message.is-shown,
+  .reaction__command:hover::before,
+  .reaction__command:focus-visible::before,
   .goal-hero::before,
   .goal-hero__image,
   .goal-quest__title::before,

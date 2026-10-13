@@ -143,7 +143,46 @@
   </main>
 
 
+  <!-- =========================
+       コマンドウィンドウ（全ページ共通）
+       ボタンの動きは js/reaction.js に書いてある
+  ========================== -->
+  <footer class="reaction" aria-label="コマンド">
+
+    <div class="dq-window reaction__window">
+
+      <p class="dq-window__label">コマンド</p>
+
+      <ul class="reaction__commands">
+        <li>
+          <button class="reaction__command" type="button" data-reaction-type="cheer">
+            おうえんする
+          </button>
+        </li>
+        <li>
+          <button class="reaction__command" type="button" data-reaction-type="share">
+            シェアする
+          </button>
+        </li>
+        <li>
+          <button class="reaction__command" type="button" data-reaction-type="next_page">
+            つぎの ぼうけんへ
+          </button>
+        </li>
+      </ul>
+
+      <!-- メッセージ欄（コマンドを選ぶと、ここに「＊ 〜」が出る） -->
+      <p class="reaction__message" role="status" aria-live="polite"></p>
+
+    </div>
+
+  </footer>
+
+
   <script src="js/script.js"></script>
+
+  <!-- ページ下のコマンドウィンドウ（全ページ共通） -->
+  <script src="js/reaction.js"></script>
 
 </body>
 
